@@ -49,7 +49,7 @@ const waLink = whatsappLink(t.whatsapp.prefilled);
 const emailLink = mailtoLink();
 ---
 
-<footer class="relative isolate overflow-hidden bg-[color:var(--color-ink)] text-[color:var(--color-paper)]">
+<footer class="relative isolate overflow-hidden bg-[oklch(18%_0.05_295)] text-[color:var(--color-paper)]">
   <span aria-hidden="true" class="pointer-events-none absolute -right-32 -top-32 h-80 w-80 rounded-full bg-brand-600/30 blur-3xl"></span>
   <span aria-hidden="true" class="pointer-events-none absolute -left-32 bottom-0 h-80 w-80 rounded-full bg-peach-500/15 blur-3xl"></span>
 
@@ -61,7 +61,7 @@ const emailLink = mailtoLink();
         <p class="text-[color:var(--color-paper)]/70 text-base leading-relaxed max-w-sm">
           {t.footer.description}
         </p>
-        <p class="font-display text-2xl text-brand-200">
+        <p class="font-display text-2xl text-white/90">
           {t.footer.tagline}
         </p>
         <div class="flex items-center gap-3">
@@ -127,7 +127,7 @@ const emailLink = mailtoLink();
         rel="noopener noreferrer"
         class="group flex items-start gap-4 rounded-2xl p-3 transition-colors hover:bg-white/5"
       >
-        <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-500/20 text-brand-200">
+        <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-500/40 text-white">
           <MessageCircle class="h-4 w-4" aria-hidden="true" />
         </span>
         <span class="flex flex-col">
@@ -141,7 +141,7 @@ const emailLink = mailtoLink();
         href={`tel:+52${CONTACT.phone}`}
         class="group flex items-start gap-4 rounded-2xl p-3 transition-colors hover:bg-white/5"
       >
-        <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-peach-500/25 text-peach-200">
+        <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-peach-500/40 text-white">
           <Phone class="h-4 w-4" aria-hidden="true" />
         </span>
         <span class="flex flex-col">
@@ -155,7 +155,7 @@ const emailLink = mailtoLink();
         href={emailLink}
         class="group flex items-start gap-4 rounded-2xl p-3 transition-colors hover:bg-white/5"
       >
-        <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sage-500/25 text-sage-200">
+        <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sage-500/40 text-white">
           <Mail class="h-4 w-4" aria-hidden="true" />
         </span>
         <span class="flex flex-col">
