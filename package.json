@@ -8,10 +8,10 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "bun run build && wrangler dev",
     "check": "astro check",
     "astro": "astro",
-    "deploy": "bun run build && wrangler pages deploy dist --project-name streben-academy",
+    "deploy": "bun run build && wrangler deploy",
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
