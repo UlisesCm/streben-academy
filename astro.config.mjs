@@ -4,8 +4,6 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
-import cloudflare from "@astrojs/cloudflare";
-
 const SITE = 'https://www.strebenacademy.com';
 
 export default defineConfig({
@@ -58,5 +56,4 @@ export default defineConfig({
     plugins: [/** @type {any} */ (tailwindcss())],
   },
 
-  adapter: cloudflare()
 });
