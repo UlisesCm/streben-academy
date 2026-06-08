@@ -4,18 +4,23 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
+import cloudflare from "@astrojs/cloudflare";
+
 const SITE = 'https://www.strebenacademy.com';
 
 export default defineConfig({
   site: SITE,
   trailingSlash: 'never',
+
   build: {
     format: 'directory',
   },
+
   prefetch: {
     prefetchAll: true,
     defaultStrategy: 'viewport',
   },
+
   i18n: {
     defaultLocale: 'es',
     locales: ['es', 'en', 'fr', 'pt'],
@@ -24,6 +29,7 @@ export default defineConfig({
       redirectToDefaultLocale: false,
     },
   },
+
   integrations: [
     mdx(),
     sitemap({
@@ -44,9 +50,12 @@ export default defineConfig({
       },
     }),
   ],
+
   vite: {
     // Cast around minor Vite Plugin version mismatch between Astro's bundled Vite
     // and @tailwindcss/vite's peer. Runtime works; type shape only differs cosmetically.
     plugins: [/** @type {any} */ (tailwindcss())],
   },
+
+  adapter: cloudflare()
 });
