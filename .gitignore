@@ -37,6 +37,9 @@ Thumbs.db
 # Playwright MCP — snapshots/logs efímeros del scrapeo de auditoría
 .playwright-mcp/
 
+# Auditoría responsive — screenshots temporales
+audit-*.png
+
 # Cloudflare Pages / Wrangler
 .wrangler/
 .dev.vars
