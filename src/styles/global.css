@@ -85,7 +85,7 @@
   --color-paper-2: oklch(96% 0.012 75);     /* sección alterna */
   --color-ink: oklch(20% 0.045 295);        /* tinta morada profunda */
   --color-ink-soft: oklch(38% 0.04 295);
-  --color-ink-muted: oklch(55% 0.025 295);
+  --color-ink-muted: oklch(42% 0.025 295);
   --color-line: oklch(90% 0.015 295);       /* borders sutiles */
 
   /* Semánticos */
@@ -97,12 +97,12 @@
   --color-foreground-muted: var(--color-ink-muted);
   --color-border: var(--color-line);
   --color-ring: var(--color-brand-500);
-  --color-primary: var(--color-brand-600);
+  --color-primary: var(--color-brand-800);
   --color-primary-foreground: oklch(99% 0.005 295);
   --color-success: var(--color-sage-700);
   --color-warning: var(--color-butter-700);
-  --color-whatsapp: oklch(64% 0.16 145);
-  --color-whatsapp-hover: oklch(58% 0.16 145);
+  --color-whatsapp: oklch(44% 0.16 145);
+  --color-whatsapp-hover: oklch(38% 0.16 145);
 
   /* Radios — generosos pero no infantiles */
   --radius-xs: 4px;

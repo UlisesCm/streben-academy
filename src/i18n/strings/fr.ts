@@ -271,7 +271,7 @@ export const fr = {
       title: 'Notre histoire',
       body: [
         'STREBEN ACADEMY est née de sept années d\'expérience directe en tutorat personnalisé. Ce qui a commencé comme un accompagnement individuel s\'est consolidé en 2025 en une académie avec sa propre vision : un enseignement centré sur la personne, des méthodes britanniques et des bourses accessibles.',
-        'Les premières générations débutent en janvier 2026. Nous mistons sur les petits groupes, l\'évaluation qualitative des progrès et un suivi attentif qui se ressent dès le premier cours.',
+        'Les premières générations débutent en janvier 2026. Nous misons sur les petits groupes, l\'évaluation qualitative des progrès et un suivi attentif qui se ressent dès le premier cours.',
       ],
     },
     founder: {

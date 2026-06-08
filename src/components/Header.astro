@@ -98,78 +98,81 @@ const ctaHref = whatsappLink(t.whatsapp.prefilled);
     </div>
   </div>
 
-  <!-- Mobile sheet -->
+
+</header>
+
+<!-- Mobile sheet — fuera del <header> para evitar el stacking context
+     creado por backdrop-filter que trapa los elementos fixed adentro -->
+<div
+  id="mobile-nav"
+  data-mobile-sheet
+  aria-hidden="true"
+  class="invisible fixed inset-0 z-50 opacity-0 transition-[opacity,visibility] duration-300 ease-out data-[open=true]:visible data-[open=true]:opacity-100 lg:hidden"
+>
+  <button
+    type="button"
+    data-mobile-backdrop
+    aria-label={t.nav.closeMenu}
+    class="absolute inset-0 bg-black/40 backdrop-blur-sm"
+  ></button>
   <div
-    id="mobile-nav"
-    data-mobile-sheet
-    aria-hidden="true"
-    class="invisible fixed inset-0 z-40 opacity-0 transition-[opacity,visibility] duration-300 ease-out data-[open=true]:visible data-[open=true]:opacity-100 lg:hidden"
+    class="absolute right-0 top-0 flex h-full w-full max-w-sm translate-x-full flex-col gap-6 overflow-y-auto bg-[color:var(--color-surface)] p-6 shadow-[var(--shadow-pop)] transition-transform duration-300 ease-out data-[open=true]:translate-x-0"
+    data-mobile-panel
   >
-    <button
-      type="button"
-      data-mobile-backdrop
-      aria-label={t.nav.closeMenu}
-      class="absolute inset-0 bg-[color:var(--color-ink)]/40 backdrop-blur-sm"
-    ></button>
-    <div
-      class="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col gap-6 overflow-y-auto bg-[color:var(--color-surface)] p-6 shadow-[var(--shadow-pop)] transition-transform duration-300 ease-out data-[open=true]:translate-x-0 [div[data-open=false]_&]:translate-x-full"
-      data-mobile-panel
-    >
-      <div class="flex items-center justify-between">
-        <Logo href={loc(locale, '')} ariaLabel={t.meta.siteName} />
-        <button
-          type="button"
-          data-mobile-close
-          aria-label={t.nav.closeMenu}
-          class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] text-[color:var(--color-foreground)] hover:bg-brand-50 dark:hover:bg-brand-900/30"
-        >
-          <X class="h-5 w-5" aria-hidden="true" />
-        </button>
-      </div>
+    <div class="flex items-center justify-between">
+      <Logo href={loc(locale, '')} ariaLabel={t.meta.siteName} />
+      <button
+        type="button"
+        data-mobile-close
+        aria-label={t.nav.closeMenu}
+        class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] text-[color:var(--color-foreground)] hover:bg-brand-50 dark:hover:bg-brand-900/30"
+      >
+        <X class="h-5 w-5" aria-hidden="true" />
+      </button>
+    </div>
 
-      <nav aria-label="Primary mobile">
-        <ul class="flex flex-col gap-1">
-          {navLinks.map((link) => (
-            <li>
-              <a
-                href={link.href}
-                aria-current={isActive(link.href) ? 'page' : undefined}
-                class:list={[
-                  'block rounded-2xl px-4 py-3 text-lg font-display transition-colors',
-                  isActive(link.href)
-                    ? 'bg-brand-100 text-[color:var(--color-foreground)] dark:bg-brand-800/50'
-                    : 'text-[color:var(--color-foreground-soft)] hover:bg-brand-50 hover:text-[color:var(--color-foreground)] dark:hover:bg-brand-900/30',
-                ]}
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
+    <nav aria-label="Primary mobile">
+      <ul class="flex flex-col gap-1">
+        {navLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              aria-current={isActive(link.href) ? 'page' : undefined}
+              class:list={[
+                'block rounded-2xl px-4 py-3 text-lg font-display transition-colors',
+                isActive(link.href)
+                  ? 'bg-brand-100 text-[color:var(--color-foreground)] dark:bg-brand-800/50'
+                  : 'text-[color:var(--color-foreground-soft)] hover:bg-brand-50 hover:text-[color:var(--color-foreground)] dark:hover:bg-brand-900/30',
+              ]}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
 
-      <div class="mt-auto flex flex-col gap-4">
-        <div class="flex items-center justify-between gap-2 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] px-4 py-3">
-          <LanguageSwitcher
-            currentLocale={locale}
-            currentPath={currentPath}
-            menuLabel={t.nav.languageMenu}
-          />
-          <ThemeToggle labels={{
-            menu: t.nav.themeMenu,
-            light: t.themes.light,
-            dark: t.themes.dark,
-            system: t.themes.system,
-          }} />
-        </div>
-        <Button href={ctaHref} variant="ink" size="lg" fullWidth>
-          <span>{t.nav.requestInfo}</span>
-          <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
-        </Button>
+    <div class="mt-auto flex flex-col gap-4">
+      <div class="flex items-center justify-between gap-2 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] px-4 py-3">
+        <LanguageSwitcher
+          currentLocale={locale}
+          currentPath={currentPath}
+          menuLabel={t.nav.languageMenu}
+        />
+        <ThemeToggle labels={{
+          menu: t.nav.themeMenu,
+          light: t.themes.light,
+          dark: t.themes.dark,
+          system: t.themes.system,
+        }} />
       </div>
+      <Button href={ctaHref} variant="ink" size="lg" fullWidth>
+        <span>{t.nav.requestInfo}</span>
+        <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+      </Button>
     </div>
   </div>
-</header>
+</div>
 
 <script>
   function initHeader() {
@@ -183,6 +186,7 @@ const ctaHref = whatsappLink(t.whatsapp.prefilled);
     }
 
     const sheet = document.querySelector<HTMLElement>('[data-mobile-sheet]');
+    const panel = document.querySelector<HTMLElement>('[data-mobile-panel]');
     const trigger = document.querySelector<HTMLButtonElement>('[data-mobile-trigger]');
     const close = document.querySelector<HTMLButtonElement>('[data-mobile-close]');
     const backdrop = document.querySelector<HTMLButtonElement>('[data-mobile-backdrop]');
@@ -190,6 +194,7 @@ const ctaHref = whatsappLink(t.whatsapp.prefilled);
 
     const setOpen = (open: boolean) => {
       sheet.dataset.open = open ? 'true' : 'false';
+      if (panel) panel.dataset.open = open ? 'true' : 'false';
       sheet.setAttribute('aria-hidden', open ? 'false' : 'true');
       trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
       document.documentElement.style.overflow = open ? 'hidden' : '';
