@@ -1,17 +1,16 @@
-# Nota: apex → www se configura en Cloudflare DNS (Bulk Redirects), no aquí.
-# Rutas viejas Jimdo (todas con trailing slash) → nuevas
+# Cloudflare Pages agrega trailing slash automáticamente (308).
+# NO agregar reglas que quiten trailing slash — causaría loop de redirects.
+# Solo mapeamos rutas legacy de Jimdo (paths distintos) y dejamos que
+# CF Pages maneje el trailing slash nativo.
+
+# Rutas legacy Jimdo → nuevas rutas del sitio
+/cursos-y-programas          /cursos                301
 /cursos-y-programas/         /cursos                301
 /cursos-y-programas/*        /cursos/:splat         301
+/galeria-y-testimonios       /testimonios           301
 /galeria-y-testimonios/      /testimonios           301
 /galeria-y-testimonios/*     /testimonios           301
-/sobre-nosotros/             /sobre-nosotros        301
+/avisos                      /alumnos               301
 /avisos/                     /alumnos               301
+/configuracion-de-cookies    /politica-de-privacidad 301
 /configuracion-de-cookies/   /politica-de-privacidad 301
-
-# Trailing slash a no-trailing (consistencia)
-/cursos/                     /cursos                301
-/becas/                      /becas                 301
-/testimonios/                /testimonios           301
-/contacto/                   /contacto              301
-/alumnos/                    /alumnos               301
-/galeria/                    /galeria               301

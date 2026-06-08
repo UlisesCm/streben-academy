@@ -9,7 +9,7 @@ const SITE = 'https://www.strebenacademy.com';
 export default defineConfig({
   site: SITE,
   output: 'static',
-  trailingSlash: 'never',
+  trailingSlash: 'always',
 
   build: {
     format: 'directory',
