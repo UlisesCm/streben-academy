@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#B39DDB"/>
+      <stop offset="100%" stop-color="#9575CD"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Decorative circles -->
+  <!-- Peach — top-right -->
+  <circle cx="1100" cy="90" r="110" fill="#FFCDD2" opacity="0.45"/>
+  <!-- Sage — bottom-left -->
+  <circle cx="110" cy="560" r="130" fill="#C8E6C9" opacity="0.40"/>
+  <!-- Butter — bottom-right -->
+  <circle cx="1080" cy="560" r="80" fill="#FFF9C4" opacity="0.50"/>
+
+  <!-- Main text block — centered vertically and horizontally -->
+  <text
+    x="600"
+    y="240"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="92"
+    font-weight="900"
+    fill="#FFFFFF"
+    text-anchor="middle"
+    letter-spacing="6"
+  >STREBEN ACADEMY</text>
+
+  <!-- Divider line -->
+  <rect x="440" y="278" width="320" height="3" fill="#FFFFFF" opacity="0.55" rx="2"/>
+
+  <!-- Tagline -->
+  <text
+    x="600"
+    y="352"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="34"
+    font-weight="400"
+    fill="#FFFFFF"
+    text-anchor="middle"
+    opacity="0.92"
+  >Clases de inglés británico online</text>
+
+  <!-- Motto -->
+  <text
+    x="600"
+    y="430"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="22"
+    font-weight="300"
+    fill="#FFFFFF"
+    text-anchor="middle"
+    letter-spacing="4"
+    opacity="0.80"
+  >Strive · Dream · Achieve</text>
+</svg>

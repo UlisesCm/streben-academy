@@ -1,0 +1,524 @@
+---
+/**
+ * SobreNosotrosPage — Página "Sobre nosotros" para STREBEN ACADEMY.
+ * Estructura: hero editorial + historia + valores + fundadora + misión/visión + CTA.
+ */
+import Section from '~/components/ui/Section.astro';
+import Container from '~/components/ui/Container.astro';
+import Button from '~/components/ui/Button.astro';
+import Chip from '~/components/ui/Chip.astro';
+import Eyebrow from '~/components/ui/Eyebrow.astro';
+import {
+  ArrowUpRight,
+  MessageCircle,
+  Quote,
+  Sparkles,
+  Target,
+  Compass,
+} from 'lucide-astro';
+import type { Locale } from '~/i18n/config';
+import type { Dictionary } from '~/i18n/strings/es';
+import { whatsappLink } from '~/lib/site';
+
+interface Props {
+  locale: Locale;
+  t: Dictionary;
+}
+
+const { t } = Astro.props;
+const a = t.about;
+
+const waInformes = whatsappLink(t.whatsapp.prefilled);
+const waSumarse = whatsappLink(
+  `Hola STREBEN ACADEMY, me interesa formar parte de su academia. ¿Pueden enviarme información?`,
+);
+
+// Tonos para las 3 palabras de valores (Strive / Dream / Achieve)
+type ValueTone = 'peach' | 'sage' | 'butter';
+const valueTones: ValueTone[] = ['peach', 'sage', 'butter'];
+const valueStyles: Record<
+  ValueTone,
+  {
+    cardBg: string;
+    word: string;
+    bar: string;
+    underline: string;
+    delay: string;
+  }
+> = {
+  peach: {
+    cardBg:
+      'bg-peach-100/80 border-peach-300/50 dark:bg-peach-700/25 dark:border-peach-500/30',
+    word: 'text-peach-700 dark:text-peach-200',
+    bar: 'bg-peach-400/70 dark:bg-peach-500/50',
+    underline: 'wavy-underline-peach',
+    delay: 'animation-delay: 0s;',
+  },
+  sage: {
+    cardBg:
+      'bg-sage-100/80 border-sage-300/50 dark:bg-sage-700/25 dark:border-sage-500/30',
+    word: 'text-sage-700 dark:text-sage-200',
+    bar: 'bg-sage-400/70 dark:bg-sage-500/50',
+    underline: 'wavy-underline-sage',
+    delay: 'animation-delay: -2s;',
+  },
+  butter: {
+    cardBg:
+      'bg-butter-100/80 border-butter-300/50 dark:bg-butter-700/25 dark:border-butter-500/30',
+    word: 'text-butter-700 dark:text-butter-200',
+    bar: 'bg-butter-400/70 dark:bg-butter-500/50',
+    underline: 'wavy-underline-peach',
+    delay: 'animation-delay: -4s;',
+  },
+};
+---
+
+<!-- ============================================================
+     HERO — editorial asimétrico
+     ============================================================ -->
+<section
+  class="relative isolate overflow-hidden bg-paper-grid pt-16 sm:pt-24 lg:pt-28 pb-20 sm:pb-28"
+>
+  <!-- Decorative blobs -->
+  <span
+    aria-hidden="true"
+    class="pointer-events-none absolute -left-32 top-12 -z-10 h-80 w-80 rounded-full bg-brand-200/55 blur-3xl dark:bg-brand-700/20"
+  ></span>
+  <span
+    aria-hidden="true"
+    class="pointer-events-none absolute -right-24 top-48 -z-10 h-80 w-80 rounded-full bg-peach-200/40 blur-3xl dark:bg-peach-700/15"
+  ></span>
+  <span
+    aria-hidden="true"
+    class="pointer-events-none absolute left-1/3 -bottom-12 -z-10 h-72 w-72 rounded-full bg-sage-200/40 blur-3xl dark:bg-sage-700/15"
+  ></span>
+
+  <Container size="xl">
+    <div class="grid grid-cols-1 items-center gap-14 lg:grid-cols-12 lg:gap-14">
+      <!-- Left: copy -->
+      <div class="lg:col-span-7 flex flex-col gap-7">
+        <Chip tone="brand" size="md" class="self-start">
+          <Sparkles class="h-3.5 w-3.5" aria-hidden="true" />
+          {a.eyebrow}
+        </Chip>
+
+        <h1
+          class="font-display text-display-xl text-[color:var(--color-foreground)] leading-[1]"
+        >
+          {a.title}
+          {' '}
+          <span class="relative inline-block">
+            <span class="relative z-10 wavy-underline">{a.titleAccent}</span>
+          </span>
+          .
+        </h1>
+
+        <p
+          class="max-w-xl text-lg sm:text-xl text-[color:var(--color-foreground-soft)] leading-relaxed"
+        >
+          {a.subtitle}
+        </p>
+
+        <p
+          class="text-sm uppercase tracking-[0.2em] text-[color:var(--color-foreground-muted)]"
+        >
+          {t.meta.motto}
+        </p>
+
+        <!-- Mobile-only motto strip -->
+        <div class="flex flex-wrap gap-3 lg:hidden" aria-hidden="true">
+          <span class="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] px-5 py-3 font-display text-2xl text-peach-700 wavy-underline-peach dark:text-peach-200">Strive</span>
+          <span class="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] px-5 py-3 font-display text-2xl text-sage-700 wavy-underline-sage dark:text-sage-200">Dream</span>
+          <span class="rounded-2xl bg-brand-600 px-5 py-3 font-display text-2xl text-butter-200">Achieve.</span>
+        </div>
+      </div>
+
+      <!-- Right: card editorial — desktop only (absolute layout breaks on mobile) -->
+      <div class="hidden lg:block lg:col-span-5 relative h-[460px] sm:h-[520px]">
+        <!-- Backdrop card (decorativa) -->
+        <div
+          aria-hidden="true"
+          class="absolute right-2 top-6 h-[88%] w-[88%] rounded-[2.5rem] border border-[color:var(--color-border)] bg-brand-100/60 dark:bg-brand-800/20"
+        ></div>
+
+        <!-- Card 1: Strive -->
+        <div
+          class="absolute left-0 top-0 w-[78%] rotate-[-3deg] rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] px-7 py-6 shadow-[var(--shadow-card)]"
+          style="animation: float 8s ease-in-out infinite;"
+        >
+          <p
+            class="text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-foreground-muted)] mb-2"
+          >
+            01 · Esfuérzate
+          </p>
+          <p
+            class="font-display text-5xl sm:text-6xl leading-[0.95] text-peach-700 dark:text-peach-200"
+          >
+            <span class="wavy-underline-peach">Strive</span>
+          </p>
+        </div>
+
+        <!-- Card 2: Dream -->
+        <div
+          class="absolute right-0 top-[38%] w-[72%] rotate-[4deg] rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] px-7 py-6 shadow-[var(--shadow-pop)]"
+          style="animation: float 9s ease-in-out infinite; animation-delay: -2s;"
+        >
+          <p
+            class="text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-foreground-muted)] mb-2"
+          >
+            02 · Sueña
+          </p>
+          <p
+            class="font-display text-5xl sm:text-6xl leading-[0.95] text-sage-700 dark:text-sage-200"
+          >
+            <span class="wavy-underline-sage">Dream</span>
+          </p>
+        </div>
+
+        <!-- Card 3: Achieve -->
+        <div
+          class="absolute left-4 bottom-0 w-[76%] -rotate-[2deg] rounded-3xl bg-brand-600 text-[color:var(--color-paper)] px-7 py-6 shadow-[var(--shadow-pop)]"
+          style="animation: float 7s ease-in-out infinite; animation-delay: -4s;"
+        >
+          <p class="text-[11px] uppercase tracking-[0.2em] text-brand-100 mb-2">
+            03 · Logra
+          </p>
+          <p
+            class="font-display text-5xl sm:text-6xl leading-[0.95] text-butter-200"
+          >
+            Achieve.
+          </p>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<!-- ============================================================
+     NUESTRA HISTORIA
+     ============================================================ -->
+<Section spacing="lg" tone="default">
+  <Container size="xl">
+    <div
+      class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16 items-start"
+    >
+      <div class="lg:col-span-5 lg:sticky lg:top-32">
+        <Eyebrow number="01" label="Nuestra historia" tone="brand" />
+        <h2
+          class="mt-6 font-display text-display-lg leading-[1.05] text-[color:var(--color-foreground)]"
+        >
+          {a.history.title.split(' ')[0]}
+          {' '}
+          <span class="wavy-underline">
+            {a.history.title.split(' ').slice(1).join(' ')}
+          </span>
+        </h2>
+        <div class="mt-6 relative max-w-md">
+          <Quote
+            aria-hidden="true"
+            class="absolute -left-2 -top-3 h-10 w-10 text-brand-300 dark:text-brand-700 opacity-70"
+          />
+          <p
+            class="font-display text-lg text-[color:var(--color-foreground-muted)] leading-relaxed pl-7"
+          >
+            Disciplina, responsabilidad y pasión por enseñar.
+          </p>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 flex flex-col gap-5">
+        {
+          a.history.body.map((paragraph, idx) => (
+            <p
+              class:list={[
+                'leading-relaxed text-[color:var(--color-foreground-soft)]',
+                idx === 0 ? 'text-xl sm:text-2xl font-display text-[color:var(--color-foreground)] leading-snug' : 'text-lg',
+              ]}
+            >
+              {paragraph}
+            </p>
+          ))
+        }
+      </div>
+    </div>
+  </Container>
+</Section>
+
+<!-- ============================================================
+     STRIVE, DREAM, ACHIEVE — valores
+     ============================================================ -->
+<Section spacing="lg" tone="alt">
+  <Container size="xl">
+    <div class="mb-12 sm:mb-16 flex flex-col gap-5 max-w-3xl">
+      <Eyebrow number="02" label="Nuestros valores" tone="peach" />
+      <h2
+        class="font-display text-display-lg leading-[1.05] text-[color:var(--color-foreground)]"
+      >
+        {a.values.title.split(',')[0]},
+        {' '}
+        <span class="wavy-underline-peach">
+          {a.values.title.split(',')[1]?.trim()}
+        </span>
+        ,
+        {' '}
+        <span class="wavy-underline-sage">
+          {a.values.title.split(',')[2]?.trim().replace('and ', '')}
+        </span>
+        .
+      </h2>
+      <p
+        class="text-[color:var(--color-foreground-soft)] text-lg leading-relaxed max-w-2xl"
+      >
+        Tres palabras. Tres compromisos. Una sola forma de aprender.
+      </p>
+    </div>
+
+    <ul class="grid grid-cols-1 gap-5 md:grid-cols-3" role="list">
+      {
+        a.values.items.map((value, idx) => {
+          const tone = valueTones[idx % valueTones.length]!;
+          const styles = valueStyles[tone];
+          const num = String(idx + 1).padStart(2, '0');
+          return (
+            <li
+              class:list={[
+                'group relative flex flex-col gap-6 overflow-hidden rounded-3xl border p-7 shadow-[var(--shadow-card)] transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] min-h-[280px]',
+                styles.cardBg,
+              ]}
+              style={styles.delay}
+            >
+              <span
+                class="text-[11px] uppercase tracking-[0.2em] font-semibold text-[color:var(--color-foreground-muted)]"
+              >
+                {num} · Valor
+              </span>
+
+              <p
+                class:list={[
+                  'font-display text-6xl sm:text-7xl leading-[0.9]',
+                  styles.word,
+                ]}
+              >
+                {value.word}.
+              </p>
+
+              <span
+                aria-hidden="true"
+                class:list={['h-1 w-16 rounded-full', styles.bar]}
+              />
+
+              <p
+                class="text-[15px] sm:text-base text-[color:var(--color-foreground-soft)] leading-relaxed"
+              >
+                {value.meaning}
+              </p>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </Container>
+</Section>
+
+<!-- ============================================================
+     FUNDADORA — layout asimétrico con placeholder de foto
+     ============================================================ -->
+<Section spacing="lg" tone="default">
+  <Container size="xl">
+    <div
+      class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16 items-center"
+    >
+      <!-- Foto placeholder con iniciales -->
+      <div class="lg:col-span-5 order-2 lg:order-1">
+        <div class="relative mx-auto max-w-md">
+          <!-- Decorative back square -->
+          <div
+            aria-hidden="true"
+            class="absolute -inset-4 -z-10 rounded-[2.5rem] bg-brand-200/40 dark:bg-brand-800/25 rotate-[-3deg]"
+          ></div>
+          <div
+            aria-hidden="true"
+            class="absolute -inset-2 -z-10 rounded-[2.5rem] bg-peach-200/40 dark:bg-peach-700/20 rotate-[3deg]"
+          ></div>
+
+          <!-- Placeholder card -->
+          <div
+            class="relative aspect-square overflow-hidden rounded-[2.5rem] border border-dashed border-brand-400/60 dark:border-brand-500/40 bg-gradient-to-br from-brand-100 via-peach-100 to-butter-100 dark:from-brand-800/40 dark:via-peach-700/20 dark:to-butter-700/20 p-8 flex flex-col items-center justify-center text-center"
+          >
+            <!-- Dotted pattern fade -->
+            <span
+              aria-hidden="true"
+              class="absolute inset-0 bg-paper-grid opacity-40"
+            ></span>
+
+            <!-- Initials -->
+            <p
+              class="relative font-display text-[8rem] sm:text-[10rem] leading-none text-brand-700/80 dark:text-brand-200/80 select-none"
+            >
+              AM
+            </p>
+
+            <p
+              class="relative mt-4 text-xs uppercase tracking-[0.2em] text-[color:var(--color-foreground-muted)]"
+            >
+              Foto pendiente
+            </p>
+          </div>
+
+          <!-- Caption sticker -->
+          <div
+            class="absolute -bottom-5 right-4 rotate-[-2deg] rounded-2xl bg-[color:var(--color-ink)] text-[color:var(--color-paper)] px-5 py-3 shadow-[var(--shadow-pop)]"
+          >
+            <p
+              class="font-display text-sm leading-tight"
+            >
+              {a.founder.name}
+            </p>
+            <p class="text-[10px] uppercase tracking-[0.18em] text-[color:var(--color-paper)]/60">
+              Fundadora
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bio -->
+      <div class="lg:col-span-7 order-1 lg:order-2 flex flex-col gap-6">
+        <Eyebrow number="03" label={a.founder.eyebrow} tone="sage" />
+
+        <h2
+          class="font-display text-display-lg leading-[1.05] text-[color:var(--color-foreground)]"
+        >
+          {a.founder.name.split(' ')[0]}
+          {' '}
+          <span class="wavy-underline-sage">
+            {a.founder.name.split(' ').slice(1).join(' ')}
+          </span>
+        </h2>
+
+        <div class="flex flex-wrap gap-2">
+          <Chip tone="sage" size="md">{a.founder.title}</Chip>
+        </div>
+
+        <div class="flex flex-col gap-4 max-w-2xl">
+          {
+            a.founder.bio.map((paragraph) => (
+              <p
+                class="text-lg leading-relaxed text-[color:var(--color-foreground-soft)]"
+              >
+                {paragraph}
+              </p>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </Container>
+</Section>
+
+<!-- ============================================================
+     MISIÓN + VISIÓN — split 50/50
+     ============================================================ -->
+<section class="relative isolate">
+  <div class="grid grid-cols-1 lg:grid-cols-2">
+    <!-- Misión -->
+    <div
+      class="relative isolate overflow-hidden bg-peach-100/80 dark:bg-peach-700/20 px-6 py-20 sm:px-10 sm:py-24 lg:py-28"
+    >
+      <span
+        aria-hidden="true"
+        class="pointer-events-none absolute -left-16 -top-16 -z-10 h-72 w-72 rounded-full bg-peach-300/40 blur-3xl"
+      ></span>
+
+      <div class="mx-auto max-w-xl lg:max-w-lg lg:ml-auto lg:mr-12 flex flex-col gap-6">
+        <span
+          class="inline-flex items-center gap-2 self-start rounded-full bg-peach-200/70 text-peach-700 px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] font-semibold dark:bg-peach-700/40 dark:text-peach-100"
+        >
+          <Target class="h-3.5 w-3.5" aria-hidden="true" />
+          {a.mission.title}
+        </span>
+
+        <h2
+          class="font-display text-display-md leading-[1.1] text-peach-700 dark:text-peach-100"
+        >
+          {a.mission.title}.
+        </h2>
+
+        <p
+          class="text-lg leading-relaxed text-[color:var(--color-foreground-soft)]"
+        >
+          {a.mission.body}
+        </p>
+      </div>
+    </div>
+
+    <!-- Visión -->
+    <div
+      class="relative isolate overflow-hidden bg-sage-100/80 dark:bg-sage-700/20 px-6 py-20 sm:px-10 sm:py-24 lg:py-28"
+    >
+      <span
+        aria-hidden="true"
+        class="pointer-events-none absolute -right-16 -bottom-16 -z-10 h-72 w-72 rounded-full bg-sage-300/40 blur-3xl"
+      ></span>
+
+      <div class="mx-auto max-w-xl lg:max-w-lg lg:mr-auto lg:ml-12 flex flex-col gap-6">
+        <span
+          class="inline-flex items-center gap-2 self-start rounded-full bg-sage-200/70 text-sage-700 px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] font-semibold dark:bg-sage-700/40 dark:text-sage-100"
+        >
+          <Compass class="h-3.5 w-3.5" aria-hidden="true" />
+          {a.vision.title}
+        </span>
+
+        <h2
+          class="font-display text-display-md leading-[1.1] text-sage-700 dark:text-sage-100"
+        >
+          {a.vision.title}.
+        </h2>
+
+        <p
+          class="text-lg leading-relaxed text-[color:var(--color-foreground-soft)]"
+        >
+          {a.vision.body}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CTA FINAL — ligero, brand pastel
+     ============================================================ -->
+<Section spacing="lg" tone="brand" decorative>
+  <Container size="lg">
+    <div
+      class="flex flex-col items-center text-center gap-7"
+    >
+      <Eyebrow number="04" label="Súmate" tone="brand" class="justify-center" />
+
+      <h2
+        class="font-display text-display-lg leading-[1.05] text-[color:var(--color-foreground)] max-w-3xl"
+      >
+        ¿Te interesa
+        {' '}
+        <span class="wavy-underline">formar parte</span>?
+      </h2>
+
+      <p
+        class="max-w-xl text-lg text-[color:var(--color-foreground-soft)] leading-relaxed"
+      >
+        Cuéntanos para quién es el curso y desde qué nivel estás. Te
+        respondemos por WhatsApp en horas hábiles.
+      </p>
+
+      <div class="mt-2 flex flex-wrap items-center justify-center gap-3">
+        <Button href={waSumarse} variant="whatsapp" size="lg">
+          <MessageCircle class="h-5 w-5" aria-hidden="true" />
+          <span>Hablar por WhatsApp</span>
+        </Button>
+        <Button href={waInformes} variant="ink" size="lg">
+          <span>{t.cta.primary}</span>
+          <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </Button>
+      </div>
+    </div>
+  </Container>
+</Section>

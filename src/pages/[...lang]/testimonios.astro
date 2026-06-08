@@ -1,0 +1,53 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import TestimoniosPage from '~/components/pages/TestimoniosPage.astro';
+import { localePaths } from '~/i18n/config';
+import { useTranslations, type Locale } from '~/i18n';
+import { getTestimoniosByLocale } from '~/lib/testimonios';
+
+export const getStaticPaths = () => localePaths();
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = useTranslations(locale);
+const testimonios = await getTestimoniosByLocale(locale);
+const p = t.testimonialsPage;
+
+// JSON-LD: ItemList de Review (uno por testimonio).
+const itemListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: `${p.title} ${p.titleAccent}`,
+  itemListElement: testimonios.map((entry, idx) => ({
+    '@type': 'Review',
+    position: idx + 1,
+    author: {
+      '@type': 'Person',
+      name: entry.data.name,
+    },
+    reviewRating: {
+      '@type': 'Rating',
+      ratingValue: entry.data.rating,
+      bestRating: 5,
+    },
+    reviewBody: entry.data.quote,
+    datePublished: entry.data.date.toISOString().split('T')[0],
+    itemReviewed: {
+      '@type': 'EducationalOrganization',
+      name: 'STREBEN ACADEMY',
+    },
+  })),
+};
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${p.title} ${p.titleAccent} | STREBEN ACADEMY`}
+  description={p.subtitle}
+  jsonLd={[itemListSchema]}
+>
+  <TestimoniosPage locale={locale} t={t} testimonios={testimonios} />
+</BaseLayout>

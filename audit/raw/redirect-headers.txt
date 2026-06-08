@@ -1,0 +1,41 @@
+=== APEX → WWW (Chrome UA) ===
+GET https://strebenacademy.com/
+HTTP/2 301
+location: https://www.strebenacademy.com/
+server: cloudflare
+(redirect correcto)
+
+Después del redirect, GET https://www.strebenacademy.com/ → 403 con curl/Chrome UA
+(Cloudflare Bot Fight Mode activo; sólo navegador real con JS pasa)
+
+=== Como Googlebot (UA spoof, no IP real) ===
+robots.txt → 403
+sitemap.xml → 403
+home → 403
+(Cloudflare valida Googlebot por reverse DNS, no por UA; mi IP no es de Google)
+
+=== Desde browser real (Playwright Chromium) ===
+robots.txt → 200, contenido:
+  User-agent: *
+  Sitemap: https://strebenacademy.com/sitemap.xml
+  Allow: /
+
+sitemap.xml → 200, 7 URLs:
+  /, /cursos-y-programas/, /becas/, /alumnos/,
+  /sobre-nosotros/, /galeria-y-testimonios/, /contacto/
+
+=== Headers de seguridad observados ===
+- x-frame-options: SAMEORIGIN ✓
+- referrer-policy: same-origin ✓
+- cache-control: private, no-store ✓ (para HTML, OK)
+- HSTS: NO observado ✗
+- CSP: NO observado ✗
+- X-Content-Type-Options: NO observado ✗
+- Permissions-Policy: NO observado ✗
+
+=== Inconsistencias ===
+1. robots.txt apunta a sitemap en apex (sin www); sitemap usa www.
+   Funciona vía 301 pero introduce fricción innecesaria para bots.
+2. Sitemap NO incluye /aviso-legal/ ni /politica-de-privacidad/ ni /configuracion-de-cookies/
+   (OK por convención, no es bloqueador).
+3. NO HAY <lastmod> ni <changefreq> en sitemap entries.

@@ -1,0 +1,94 @@
+---
+import { Languages, Check } from 'lucide-astro';
+import { locales, localeLabels, type Locale } from '~/i18n/config';
+import { switchLocale } from '~/lib/url';
+
+interface Props {
+  currentLocale: Locale;
+  currentPath: string;
+  menuLabel: string;
+}
+
+const { currentLocale, currentPath, menuLabel } = Astro.props;
+---
+
+<div class="relative" data-lang-root>
+  <button
+    type="button"
+    data-lang-trigger
+    aria-label={menuLabel}
+    aria-haspopup="menu"
+    aria-expanded="false"
+    class="inline-flex h-10 items-center gap-1.5 rounded-full border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] px-3 text-sm font-medium text-[color:var(--color-foreground-soft)] transition-colors hover:bg-brand-50 hover:text-[color:var(--color-foreground)] focus-visible:outline-2 focus-visible:outline-[color:var(--color-ring)] focus-visible:outline-offset-3 dark:hover:bg-brand-900/30"
+  >
+    <Languages class="h-[16px] w-[16px]" aria-hidden="true" />
+    <span class="uppercase tracking-[0.08em]">{currentLocale}</span>
+  </button>
+
+  <div
+    data-lang-menu
+    role="menu"
+    aria-label={menuLabel}
+    class="invisible absolute right-0 top-12 z-40 min-w-[200px] origin-top-right scale-95 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-1.5 opacity-0 shadow-[var(--shadow-pop)] transition-[transform,opacity,visibility] duration-200 ease-out data-[open=true]:visible data-[open=true]:scale-100 data-[open=true]:opacity-100"
+  >
+    {
+      locales.map((l) => {
+        const target = switchLocale(currentPath, l);
+        const isCurrent = l === currentLocale;
+        return (
+          <a
+            href={target}
+            role="menuitemradio"
+            aria-checked={isCurrent ? 'true' : 'false'}
+            hreflang={localeLabels[l].htmlLang}
+            class:list={[
+              'flex items-center justify-between gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors',
+              isCurrent
+                ? 'bg-brand-100 text-[color:var(--color-foreground)] dark:bg-brand-800/40'
+                : 'text-[color:var(--color-foreground-soft)] hover:bg-brand-50 hover:text-[color:var(--color-foreground)] dark:hover:bg-brand-900/30',
+            ]}
+          >
+            <span class="inline-flex items-center gap-2">
+              <span aria-hidden="true">{localeLabels[l].flag}</span>
+              <span>{localeLabels[l].native}</span>
+            </span>
+            {isCurrent && <Check class="h-4 w-4 text-brand-500" aria-hidden="true" />}
+          </a>
+        );
+      })
+    }
+  </div>
+</div>
+
+<script>
+  function initLangMenus() {
+    document.querySelectorAll<HTMLElement>('[data-lang-root]').forEach((root) => {
+      const trigger = root.querySelector<HTMLButtonElement>('[data-lang-trigger]');
+      const menu = root.querySelector<HTMLElement>('[data-lang-menu]');
+      if (!trigger || !menu) return;
+
+      const close = () => {
+        menu.dataset.open = 'false';
+        trigger.setAttribute('aria-expanded', 'false');
+      };
+      const open = () => {
+        menu.dataset.open = 'true';
+        trigger.setAttribute('aria-expanded', 'true');
+      };
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (menu.dataset.open === 'true') close();
+        else open();
+      });
+      document.addEventListener('click', (e) => {
+        if (!root.contains(e.target as Node)) close();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') close();
+      });
+    });
+  }
+  initLangMenus();
+  document.addEventListener('astro:after-swap', initLangMenus);
+</script>

@@ -1,0 +1,70 @@
+---
+import Section from '~/components/ui/Section.astro';
+import Container from '~/components/ui/Container.astro';
+import SectionHeading from '~/components/ui/SectionHeading.astro';
+import Button from '~/components/ui/Button.astro';
+import { Sparkle, ArrowUpRight } from 'lucide-astro';
+import type { Locale } from '~/i18n/config';
+import type { Dictionary } from '~/i18n/strings/es';
+import { loc } from '~/lib/url';
+
+interface Props {
+  locale: Locale;
+  t: Dictionary;
+}
+
+const { locale, t } = Astro.props;
+const s = t.home.scholarships;
+const items = t.scholarshipsPage.items;
+const scholarshipsUrl = loc(locale, 'becas');
+---
+
+<Section spacing="lg" tone="brand" decorative id="becas">
+  <Container size="xl">
+    <div class="flex flex-col gap-12 lg:flex-row lg:gap-16">
+      <div class="lg:w-2/5 flex flex-col gap-8">
+        <SectionHeading
+          eyebrowNumber="04"
+          eyebrow={s.eyebrow.split('—')[1]?.trim() ?? s.eyebrow}
+          eyebrowTone="brand"
+          title={s.title}
+          titleAccent={s.titleAccent}
+          accentTone="brand"
+          subtitle={s.subtitle}
+        />
+        <div>
+          <Button href={scholarshipsUrl} variant="ink" size="lg">
+            <span>{s.cta}</span>
+            <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+          </Button>
+        </div>
+      </div>
+
+      <ul class="lg:w-3/5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {items.map((item, idx) => (
+          <li
+            class="group relative flex flex-col gap-3 rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-6 shadow-[var(--shadow-card)] transition-transform duration-300 hover:-translate-y-1"
+          >
+            <div class="flex items-center justify-between gap-3">
+              <span class="font-display text-xs uppercase tracking-[0.16em] text-brand-500">
+                0{idx + 1}
+              </span>
+              <span class="font-display text-3xl text-brand-600 dark:text-brand-300">
+                -{item.discount}
+              </span>
+            </div>
+            <h3 class="font-display text-xl text-[color:var(--color-foreground)]">
+              {item.name}
+            </h3>
+            <p class="text-sm text-[color:var(--color-foreground-soft)] leading-relaxed">
+              {item.requirement}
+            </p>
+            <span aria-hidden="true" class="absolute right-5 bottom-5 inline-flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-brand-600 opacity-0 transition-opacity group-hover:opacity-100 dark:bg-brand-800/40 dark:text-brand-200">
+              <Sparkle class="h-4 w-4" />
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Container>
+</Section>

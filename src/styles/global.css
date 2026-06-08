@@ -1,0 +1,352 @@
+/* ============================================================================
+   STREBEN ACADEMY — global.css
+   Sistema de diseño: tokens, tipografía, modos light/dark, utilidades.
+   Tailwind v4 (CSS-first config con @theme).
+   ============================================================================ */
+
+@import "tailwindcss";
+
+/* Self-host fonts via @fontsource — instalados como deps */
+@import "@fontsource/paytone-one/400.css";
+@import "@fontsource/poppins/400.css";
+@import "@fontsource/poppins/500.css";
+@import "@fontsource/poppins/600.css";
+@import "@fontsource/poppins/700.css";
+
+/* ----------------------------------------------------------------------------
+   Dark mode — strategy: class on <html> (.dark)
+   Aplicado por inline script anti-FOUC en BaseLayout.astro
+   ---------------------------------------------------------------------------- */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ----------------------------------------------------------------------------
+   @theme — tokens del proyecto
+   ---------------------------------------------------------------------------- */
+@theme {
+  /* Tipografía */
+  --font-display: "Paytone One", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Poppins", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Escala tipográfica fluida (clamp) */
+  --text-eyebrow: 0.75rem; /* 12 */
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.16em;
+
+  --text-display-xl: clamp(3rem, 5vw + 1rem, 5.75rem);
+  --text-display-xl--line-height: 1;
+  --text-display-xl--letter-spacing: -0.02em;
+
+  --text-display-lg: clamp(2.25rem, 3.5vw + 1rem, 4rem);
+  --text-display-lg--line-height: 1.05;
+  --text-display-lg--letter-spacing: -0.015em;
+
+  --text-display-md: clamp(1.75rem, 2vw + 1rem, 2.75rem);
+  --text-display-md--line-height: 1.1;
+  --text-display-md--letter-spacing: -0.01em;
+
+  --text-display-sm: clamp(1.375rem, 1vw + 1rem, 1.875rem);
+  --text-display-sm--line-height: 1.2;
+
+  /* Paleta brand — lavanda pastel con acentos cálidos.
+     OKLCH para mejor consistencia perceptual. */
+  --color-brand-50:  oklch(98% 0.012 295);
+  --color-brand-100: oklch(95.5% 0.025 295);
+  --color-brand-200: oklch(91% 0.05 295);
+  --color-brand-300: oklch(84% 0.085 295);
+  --color-brand-400: oklch(76% 0.12 295);
+  --color-brand-500: oklch(67% 0.16 295);
+  --color-brand-600: oklch(58% 0.18 295);
+  --color-brand-700: oklch(48% 0.16 295);
+  --color-brand-800: oklch(38% 0.13 295);
+  --color-brand-900: oklch(28% 0.09 295);
+  --color-brand-950: oklch(18% 0.06 295);
+
+  /* Acentos pastel — peach, sage, butter */
+  --color-peach-100: oklch(95% 0.04 30);
+  --color-peach-200: oklch(89% 0.08 30);
+  --color-peach-300: oklch(83% 0.11 30);
+  --color-peach-500: oklch(72% 0.15 30);
+  --color-peach-700: oklch(50% 0.13 30);
+
+  --color-sage-100: oklch(95% 0.035 150);
+  --color-sage-200: oklch(89% 0.07 150);
+  --color-sage-300: oklch(82% 0.1 150);
+  --color-sage-500: oklch(68% 0.13 150);
+  --color-sage-700: oklch(45% 0.11 150);
+
+  --color-butter-100: oklch(96.5% 0.04 90);
+  --color-butter-200: oklch(92% 0.09 90);
+  --color-butter-300: oklch(87% 0.13 90);
+  --color-butter-500: oklch(78% 0.16 90);
+  --color-butter-700: oklch(55% 0.14 90);
+
+  /* Cream / paper / ink — tonos neutros cálidos */
+  --color-paper: oklch(98.5% 0.008 75);     /* off-white cálido */
+  --color-paper-2: oklch(96% 0.012 75);     /* sección alterna */
+  --color-ink: oklch(20% 0.045 295);        /* tinta morada profunda */
+  --color-ink-soft: oklch(38% 0.04 295);
+  --color-ink-muted: oklch(55% 0.025 295);
+  --color-line: oklch(90% 0.015 295);       /* borders sutiles */
+
+  /* Semánticos */
+  --color-surface: var(--color-paper);
+  --color-surface-2: var(--color-paper-2);
+  --color-surface-elevated: oklch(100% 0 0);
+  --color-foreground: var(--color-ink);
+  --color-foreground-soft: var(--color-ink-soft);
+  --color-foreground-muted: var(--color-ink-muted);
+  --color-border: var(--color-line);
+  --color-ring: var(--color-brand-500);
+  --color-primary: var(--color-brand-600);
+  --color-primary-foreground: oklch(99% 0.005 295);
+  --color-success: var(--color-sage-700);
+  --color-warning: var(--color-butter-700);
+  --color-whatsapp: oklch(64% 0.16 145);
+  --color-whatsapp-hover: oklch(58% 0.16 145);
+
+  /* Radios — generosos pero no infantiles */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 32px;
+  --radius-2xl: 44px;
+  --radius-pill: 999px;
+
+  /* Sombras — soft, no brutales */
+  --shadow-card: 0 1px 0 0 oklch(80% 0.025 295 / 30%), 0 10px 30px -8px oklch(40% 0.05 295 / 12%);
+  --shadow-card-hover: 0 1px 0 0 oklch(80% 0.025 295 / 40%), 0 22px 50px -12px oklch(40% 0.05 295 / 22%);
+  --shadow-pop: 0 18px 60px -15px oklch(40% 0.06 295 / 25%);
+  --shadow-soft: 0 2px 12px -2px oklch(40% 0.05 295 / 10%);
+
+  /* Motion */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --animate-marquee: marquee 28s linear infinite;
+  --animate-marquee-slow: marquee 50s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 2.5s ease-in-out infinite;
+  --animate-fade-up: fade-up 0.6s var(--ease-out-quart) both;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(var(--tw-rotate, 0deg)); }
+    50%      { transform: translateY(-10px) rotate(var(--tw-rotate, 0deg)); }
+  }
+  @keyframes pulse-soft {
+    0%, 100% { box-shadow: 0 0 0 0 oklch(64% 0.16 145 / 50%); }
+    50%      { box-shadow: 0 0 0 14px oklch(64% 0.16 145 / 0%); }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Dark mode token overrides — cálido, NO frío.
+   Mantiene la identidad morada; baja luminosidad, sube saturación selectiva.
+   ---------------------------------------------------------------------------- */
+@layer base {
+  :where(.dark) {
+    --color-paper: oklch(16% 0.045 295);
+    --color-paper-2: oklch(20% 0.05 295);
+    --color-ink: oklch(96% 0.015 295);
+    --color-ink-soft: oklch(82% 0.025 295);
+    --color-ink-muted: oklch(66% 0.03 295);
+    --color-line: oklch(30% 0.035 295);
+
+    --color-surface: var(--color-paper);
+    --color-surface-2: var(--color-paper-2);
+    --color-surface-elevated: oklch(24% 0.055 295);
+    --color-foreground: var(--color-ink);
+    --color-foreground-soft: var(--color-ink-soft);
+    --color-foreground-muted: var(--color-ink-muted);
+    --color-border: var(--color-line);
+    --color-primary: var(--color-brand-400);
+    --color-primary-foreground: oklch(15% 0.04 295);
+
+    --shadow-card: 0 1px 0 0 oklch(40% 0.05 295 / 50%), 0 10px 30px -8px oklch(0% 0 0 / 40%);
+    --shadow-card-hover: 0 1px 0 0 oklch(40% 0.05 295 / 60%), 0 22px 50px -12px oklch(0% 0 0 / 55%);
+    --shadow-pop: 0 18px 60px -15px oklch(0% 0 0 / 60%);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Base styles
+   ---------------------------------------------------------------------------- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    text-rendering: optimizeLegibility;
+    transition: background-color 200ms var(--ease-out-quart);
+  }
+
+  ::selection {
+    background-color: var(--color-brand-300);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Headings default to display font */
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  /* Tipografía MDX */
+  .prose-streben {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-foreground-soft);
+  }
+  .prose-streben h2 {
+    font-family: var(--font-display);
+    font-size: 1.875rem;
+    color: var(--color-foreground);
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  .prose-streben h3 {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    color: var(--color-foreground);
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose-streben p { margin-bottom: 1.1rem; }
+  .prose-streben a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 4px;
+  }
+  .prose-streben ul { padding-left: 1.25rem; margin-bottom: 1.1rem; }
+  .prose-streben li {
+    position: relative;
+    margin-bottom: 0.4rem;
+    list-style-type: none;
+    padding-left: 1.1rem;
+  }
+  .prose-streben li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--color-brand-500);
+    font-weight: 600;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Utilities personalizadas (componentes utilitarios de marca)
+   ---------------------------------------------------------------------------- */
+
+/* Underline ondulado hand-drawn (para palabras acento en hero) */
+@utility wavy-underline {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12'><path d='M0 6 Q 12.5 0 25 6 T 50 6 T 75 6 T 100 6' stroke='%23c9a4ff' stroke-width='3' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.45em;
+  padding-bottom: 0.1em;
+}
+
+@utility wavy-underline-peach {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12'><path d='M0 6 Q 12.5 0 25 6 T 50 6 T 75 6 T 100 6' stroke='%23f4b3a4' stroke-width='3' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.45em;
+  padding-bottom: 0.1em;
+}
+
+@utility wavy-underline-sage {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12'><path d='M0 6 Q 12.5 0 25 6 T 50 6 T 75 6 T 100 6' stroke='%2392c9a8' stroke-width='3' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.45em;
+  padding-bottom: 0.1em;
+}
+
+/* Patrón dotted suave (fondo de hero) */
+@utility bg-paper-grid {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--color-foreground) 12%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+}
+
+/* Botón pulse para FAB */
+@utility ring-pulse {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    animation: pulse-soft 2.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+/* Sticker / tag (chip) — pill con leve sombra */
+@utility chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background-color: color-mix(in oklch, var(--color-brand-200) 50%, var(--color-surface));
+  color: var(--color-brand-700);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  border: 1px solid color-mix(in oklch, var(--color-brand-300) 40%, transparent);
+}
+:where(.dark) .chip {
+  background-color: color-mix(in oklch, var(--color-brand-700) 25%, var(--color-surface));
+  color: var(--color-brand-200);
+  border-color: color-mix(in oklch, var(--color-brand-500) 40%, transparent);
+}
+
+/* Marquee container helper */
+@utility marquee-mask {
+  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+}

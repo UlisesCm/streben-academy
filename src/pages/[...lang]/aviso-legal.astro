@@ -1,0 +1,29 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import LegalPage from '~/components/pages/LegalPage.astro';
+import { localePaths } from '~/i18n/config';
+import { useTranslations, type Locale } from '~/i18n';
+
+export const getStaticPaths = () => localePaths();
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = useTranslations(locale);
+const terms = t.legal.terms;
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${terms.title} | STREBEN ACADEMY`}
+  description={terms.body[0]}
+  noindex={true}
+>
+  <LegalPage
+    title={terms.title}
+    lastUpdate={terms.lastUpdate}
+    body={terms.body}
+  />
+</BaseLayout>

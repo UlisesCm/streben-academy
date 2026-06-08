@@ -1,0 +1,397 @@
+---
+/**
+ * BecasPage — Página de Becas para STREBEN ACADEMY.
+ * Estructura: hero corto + grid de 4 becas + reglas + CTA final.
+ * Diseño editorial, asimétrico, paleta pastel rotativa.
+ */
+import Section from '~/components/ui/Section.astro';
+import Container from '~/components/ui/Container.astro';
+import SectionHeading from '~/components/ui/SectionHeading.astro';
+import Button from '~/components/ui/Button.astro';
+import Chip from '~/components/ui/Chip.astro';
+import Eyebrow from '~/components/ui/Eyebrow.astro';
+import {
+  ArrowUpRight,
+  MessageCircle,
+  CheckCircle2,
+  Sparkles,
+  GraduationCap,
+  Users2,
+  HeartHandshake,
+  Layers,
+} from 'lucide-astro';
+import type { Locale } from '~/i18n/config';
+import type { Dictionary } from '~/i18n/strings/es';
+import { whatsappLink, FORMS } from '~/lib/site';
+
+interface Props {
+  locale: Locale;
+  t: Dictionary;
+}
+
+const { t } = Astro.props;
+const s = t.scholarshipsPage;
+
+// Tonos pastel rotativos para cada beca (orden intencional, no aleatorio)
+type Tone = 'brand' | 'peach' | 'sage' | 'butter';
+const tones: Tone[] = ['brand', 'peach', 'sage', 'butter'];
+
+const toneStyles: Record<
+  Tone,
+  {
+    cardBg: string;
+    discount: string;
+    numberOpacity: string;
+    iconBg: string;
+    divider: string;
+    badge: string;
+  }
+> = {
+  brand: {
+    cardBg:
+      'bg-brand-100/80 border-brand-300/50 dark:bg-brand-800/30 dark:border-brand-600/30',
+    discount: 'text-brand-700 dark:text-brand-200',
+    numberOpacity: 'text-brand-300/60 dark:text-brand-500/30',
+    iconBg:
+      'bg-brand-200/70 text-brand-700 dark:bg-brand-700/40 dark:text-brand-100',
+    divider: 'bg-brand-300/50 dark:bg-brand-600/40',
+    badge: 'text-brand-700 dark:text-brand-200',
+  },
+  peach: {
+    cardBg:
+      'bg-peach-100/80 border-peach-300/50 dark:bg-peach-700/25 dark:border-peach-500/30',
+    discount: 'text-peach-700 dark:text-peach-200',
+    numberOpacity: 'text-peach-300/70 dark:text-peach-500/30',
+    iconBg:
+      'bg-peach-200/70 text-peach-700 dark:bg-peach-700/40 dark:text-peach-100',
+    divider: 'bg-peach-300/50 dark:bg-peach-500/40',
+    badge: 'text-peach-700 dark:text-peach-200',
+  },
+  sage: {
+    cardBg:
+      'bg-sage-100/80 border-sage-300/50 dark:bg-sage-700/25 dark:border-sage-500/30',
+    discount: 'text-sage-700 dark:text-sage-200',
+    numberOpacity: 'text-sage-300/70 dark:text-sage-500/30',
+    iconBg:
+      'bg-sage-200/70 text-sage-700 dark:bg-sage-700/40 dark:text-sage-100',
+    divider: 'bg-sage-300/50 dark:bg-sage-500/40',
+    badge: 'text-sage-700 dark:text-sage-200',
+  },
+  butter: {
+    cardBg:
+      'bg-butter-100/80 border-butter-300/50 dark:bg-butter-700/25 dark:border-butter-500/30',
+    discount: 'text-butter-700 dark:text-butter-200',
+    numberOpacity: 'text-butter-300/70 dark:text-butter-500/30',
+    iconBg:
+      'bg-butter-200/70 text-butter-700 dark:bg-butter-700/40 dark:text-butter-100',
+    divider: 'bg-butter-300/60 dark:bg-butter-500/40',
+    badge: 'text-butter-700 dark:text-butter-200',
+  },
+};
+
+// Iconos temáticos por beca (orden corresponde a items[])
+const scholarshipIcons = [GraduationCap, Users2, HeartHandshake, Layers];
+
+// Mensajes prefijados para cada CTA
+const waSolicitar = whatsappLink(
+  `Hola STREBEN ACADEMY, me interesa solicitar una beca. ¿Pueden ayudarme a elegir la que me conviene más?`,
+);
+const waInformes = whatsappLink(t.whatsapp.prefilled);
+---
+
+<!-- ============================================================
+     HERO — corto, paper-grid, asimétrico
+     ============================================================ -->
+<section
+  class="relative isolate overflow-hidden bg-paper-grid pt-16 sm:pt-24 lg:pt-28 pb-16 sm:pb-24"
+>
+  <!-- Decorative blobs -->
+  <span
+    aria-hidden="true"
+    class="pointer-events-none absolute -left-32 top-12 -z-10 h-72 w-72 rounded-full bg-brand-200/55 blur-3xl dark:bg-brand-700/20"
+  ></span>
+  <span
+    aria-hidden="true"
+    class="pointer-events-none absolute -right-24 -top-12 -z-10 h-80 w-80 rounded-full bg-peach-200/40 blur-3xl dark:bg-peach-700/15"
+  ></span>
+  <span
+    aria-hidden="true"
+    class="pointer-events-none absolute left-1/3 bottom-0 -z-10 h-56 w-56 rounded-full bg-sage-200/35 blur-3xl dark:bg-sage-700/15"
+  ></span>
+
+  <Container size="xl">
+    <div class="grid grid-cols-1 items-end gap-10 lg:grid-cols-12 lg:gap-14">
+      <div class="lg:col-span-8 flex flex-col gap-7">
+        <Chip tone="brand" size="md" class="self-start">
+          <Sparkles class="h-3.5 w-3.5" aria-hidden="true" />
+          {s.eyebrow}
+        </Chip>
+
+        <h1
+          class="font-display text-display-xl text-[color:var(--color-foreground)] leading-[1]"
+        >
+          {s.title}
+          {' '}
+          <span class="relative inline-block">
+            <span class="relative z-10 wavy-underline">{s.titleAccent}</span>
+          </span>
+          .
+        </h1>
+
+        <p
+          class="max-w-2xl text-lg sm:text-xl text-[color:var(--color-foreground-soft)] leading-relaxed"
+        >
+          {s.subtitle}
+        </p>
+      </div>
+
+      <!-- Mini ficha visual a la derecha -->
+      <aside class="lg:col-span-4 flex justify-start lg:justify-end">
+        <div
+          class="relative w-full max-w-sm rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-6 shadow-[var(--shadow-card)] sm:p-7"
+          style="animation: float 8s ease-in-out infinite;"
+        >
+          <p
+            class="text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-foreground-muted)] mb-3"
+          >
+            En total
+          </p>
+          <p
+            class="font-display text-6xl sm:text-7xl leading-[0.95] text-[color:var(--color-foreground)]"
+          >
+            4
+          </p>
+          <p
+            class="mt-2 font-display text-xl text-[color:var(--color-foreground-soft)]"
+          >
+            caminos para becarte.
+          </p>
+          <div class="mt-5 flex flex-wrap gap-2">
+            <span class="chip">Hasta -15%</span>
+            <span class="chip">No acumulables</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </Container>
+</section>
+
+<!-- ============================================================
+     LAS CUATRO BECAS — grid de cards rotativas
+     ============================================================ -->
+<Section spacing="lg" tone="default">
+  <Container size="xl">
+    <div class="mb-12 sm:mb-16 flex flex-col gap-5 max-w-3xl">
+      <Eyebrow number="01" label="Las cuatro becas" tone="brand" />
+      <h2
+        class="font-display text-display-lg leading-[1.05] text-[color:var(--color-foreground)]"
+      >
+        Una para cada
+        {' '}
+        <span class="inline-block wavy-underline-peach">situación</span>.
+      </h2>
+      <p
+        class="text-[color:var(--color-foreground-soft)] text-lg leading-relaxed max-w-2xl"
+      >
+        Elige la que mejor se ajuste a tu caso. Aplican durante la
+        preinscripción y se mantienen toda la generación.
+      </p>
+    </div>
+
+    <ul
+      class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4"
+      role="list"
+    >
+      {
+        s.items.map((item, idx) => {
+          const tone = tones[idx % tones.length]!;
+          const styles = toneStyles[tone];
+          const Icon = scholarshipIcons[idx % scholarshipIcons.length]!;
+          const num = String(idx + 1).padStart(2, '0');
+          return (
+            <li
+              class:list={[
+                'group relative flex flex-col gap-5 overflow-hidden rounded-3xl border p-7 transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]',
+                styles.cardBg,
+              ]}
+            >
+              {/* Número decorativo gigante esquina superior derecha */}
+              <span
+                aria-hidden="true"
+                class:list={[
+                  'pointer-events-none absolute -right-3 -top-2 font-display text-[7.5rem] leading-none select-none',
+                  styles.numberOpacity,
+                ]}
+              >
+                {num}
+              </span>
+
+              {/* Icono y badge */}
+              <div class="relative z-10 flex items-start justify-between gap-3">
+                <span
+                  class:list={[
+                    'inline-flex h-12 w-12 items-center justify-center rounded-2xl',
+                    styles.iconBg,
+                  ]}
+                >
+                  <Icon class="h-5 w-5" aria-hidden="true" />
+                </span>
+                <span
+                  class:list={[
+                    'text-[11px] uppercase tracking-[0.18em] font-semibold mt-2',
+                    styles.badge,
+                  ]}
+                >
+                  Beca {num}
+                </span>
+              </div>
+
+              {/* Descuento enorme */}
+              <div class="relative z-10">
+                <p
+                  class:list={[
+                    'font-display text-6xl sm:text-7xl leading-[0.9]',
+                    styles.discount,
+                  ]}
+                >
+                  -{item.discount}
+                </p>
+              </div>
+
+              <div
+                aria-hidden="true"
+                class:list={['h-px w-12 rounded-full', styles.divider]}
+              />
+
+              {/* Nombre */}
+              <h3
+                class="relative z-10 font-display text-2xl text-[color:var(--color-foreground)] leading-tight"
+              >
+                {item.name}
+              </h3>
+
+              {/* Requirement */}
+              <p
+                class="relative z-10 text-[15px] text-[color:var(--color-foreground-soft)] leading-relaxed"
+              >
+                {item.requirement}
+              </p>
+
+              {/* Cómo aplicar */}
+              <details class="relative z-10 group/details mt-auto">
+                <summary
+                  class="flex cursor-pointer items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.14em] text-[color:var(--color-foreground)] [&::-webkit-details-marker]:hidden"
+                >
+                  <span>Cómo aplicar</span>
+                  <ArrowUpRight
+                    class="h-4 w-4 transition-transform duration-300 group-open/details:rotate-90"
+                    aria-hidden="true"
+                  />
+                </summary>
+                <p
+                  class="mt-3 text-sm text-[color:var(--color-foreground-soft)] leading-relaxed"
+                >
+                  {item.howTo}
+                </p>
+              </details>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </Container>
+</Section>
+
+<!-- ============================================================
+     REGLAS EN UNA LÍNEA — list con check icons
+     ============================================================ -->
+<Section spacing="lg" tone="alt">
+  <Container size="lg">
+    <div
+      class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16 items-start"
+    >
+      <div class="lg:col-span-5 flex flex-col gap-5">
+        <Eyebrow number="02" label="Reglas" tone="sage" />
+        <h2
+          class="font-display text-display-md leading-[1.05] text-[color:var(--color-foreground)]"
+        >
+          {s.rules.title}
+        </h2>
+        <p class="text-[color:var(--color-foreground-soft)] leading-relaxed">
+          Para que las becas funcionen contigo, no contra ti.
+        </p>
+      </div>
+
+      <ul class="lg:col-span-7 flex flex-col">
+        {
+          s.rules.items.map((rule, idx) => (
+            <li
+              class:list={[
+                'flex items-start gap-4 py-5',
+                idx !== 0
+                  ? 'border-t border-[color:var(--color-border)]'
+                  : '',
+              ]}
+            >
+              <span class="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sage-200/70 text-sage-700 dark:bg-sage-700/40 dark:text-sage-200">
+                <CheckCircle2 class="h-5 w-5" aria-hidden="true" />
+              </span>
+              <p class="text-[15px] sm:text-base text-[color:var(--color-foreground-soft)] leading-relaxed pt-1.5">
+                {rule}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Container>
+</Section>
+
+<!-- ============================================================
+     CTA FINAL — split de 2 columnas, tono brand-100
+     ============================================================ -->
+<Section spacing="lg" tone="brand" decorative id="solicitar">
+  <Container size="lg">
+    <div
+      class="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14"
+    >
+      <div class="lg:col-span-7 flex flex-col gap-5">
+        <Eyebrow number="03" label="Solicitar mi beca" tone="brand" />
+        <h2
+          class="font-display text-display-lg leading-[1.05] text-[color:var(--color-foreground)]"
+        >
+          {s.cta.title.replace('¿', '').replace('?', '')}
+          {' '}
+          <span class="wavy-underline">de verdad</span>?
+        </h2>
+        <p
+          class="max-w-xl text-lg text-[color:var(--color-foreground-soft)] leading-relaxed"
+        >
+          {s.cta.subtitle}
+        </p>
+      </div>
+
+      <div class="lg:col-span-5 flex flex-col gap-3 lg:items-end">
+        <Button href={waSolicitar} variant="whatsapp" size="lg" fullWidth>
+          <MessageCircle class="h-5 w-5" aria-hidden="true" />
+          <span>{s.cta.primary}</span>
+        </Button>
+
+        <Button href={waInformes} variant="ink" size="lg" fullWidth>
+          <span>{s.cta.secondary}</span>
+          <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </Button>
+
+        <a
+          href={FORMS.solicitarBeca}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-2 inline-flex items-center justify-center gap-1.5 text-sm text-[color:var(--color-foreground-muted)] underline underline-offset-4 hover:text-[color:var(--color-foreground)] transition-colors lg:self-end"
+        >
+          <span>O llena el formulario directo</span>
+          <ArrowUpRight class="h-3.5 w-3.5" aria-hidden="true" />
+        </a>
+      </div>
+    </div>
+  </Container>
+</Section>

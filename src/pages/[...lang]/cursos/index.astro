@@ -1,0 +1,29 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import CursosPage from '~/components/pages/CursosPage.astro';
+import { localePaths } from '~/i18n/config';
+import { useTranslations, type Locale } from '~/i18n';
+import { getCoursesByLocale, groupByProgram } from '~/lib/courses';
+
+export const getStaticPaths = () => localePaths();
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = useTranslations(locale);
+
+const courses = await getCoursesByLocale(locale);
+const coursesByProgram = groupByProgram(courses);
+
+const pageTitle = `${t.courses.list.title} ${t.courses.list.titleAccent}`;
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${pageTitle} | ${t.meta.siteName}`}
+  description={t.courses.list.subtitle}
+>
+  <CursosPage locale={locale} t={t} coursesByProgram={coursesByProgram} />
+</BaseLayout>

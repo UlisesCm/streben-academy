@@ -1,0 +1,477 @@
+---
+import Container from '~/components/ui/Container.astro';
+import Section from '~/components/ui/Section.astro';
+import SectionHeading from '~/components/ui/SectionHeading.astro';
+import Chip from '~/components/ui/Chip.astro';
+import Button from '~/components/ui/Button.astro';
+import Eyebrow from '~/components/ui/Eyebrow.astro';
+import {
+  ArrowUpRight,
+  ArrowRight,
+  MessageCircle,
+  FileCheck,
+  Sparkles,
+  Clock3,
+  Users,
+  GraduationCap,
+  BookOpen,
+  Languages,
+  CheckCircle2,
+  Coins,
+} from 'lucide-astro';
+import type { Locale } from '~/i18n/config';
+import type { Dictionary } from '~/i18n/strings/es';
+import type { Course } from '~/lib/courses';
+import { loc } from '~/lib/url';
+import { whatsappLink, FORMS } from '~/lib/site';
+
+type Program = 'kiddos' | 'teens' | 'adults' | 'tutoring';
+type Tone = 'brand' | 'peach' | 'sage' | 'butter';
+
+interface Props {
+  locale: Locale;
+  t: Dictionary;
+  coursesByProgram: Map<Program, Course[]>;
+}
+
+const { locale, t, coursesByProgram } = Astro.props;
+
+/** Tone map per program (visual decisions for the cursos page). */
+const programTone: Record<Program, Tone> = {
+  kiddos: 'butter',
+  teens: 'sage',
+  adults: 'peach',
+  tutoring: 'brand',
+};
+
+/** Lucide icon used in each program eyebrow / hero. */
+const programIcon: Record<Program, typeof Sparkles> = {
+  kiddos: Sparkles,
+  teens: GraduationCap,
+  adults: BookOpen,
+  tutoring: Languages,
+};
+
+/** Section <Section tone="..."> prop per program — pastel band. */
+const programSectionTone: Record<Program, 'butter' | 'sage' | 'peach' | 'brand'> = {
+  kiddos: 'butter',
+  teens: 'sage',
+  adults: 'peach',
+  tutoring: 'brand',
+};
+
+/** Eyebrow numbering used on each program section. */
+const programNumber: Record<Program, string> = {
+  kiddos: '01',
+  teens: '02',
+  adults: '03',
+  tutoring: '04',
+};
+
+/** Per-program copy from dictionary. */
+const programCopy: Record<Program, { title: string; subtitle: string; eyebrow: string }> = {
+  kiddos: {
+    title: t.courses.list.kiddosSectionTitle,
+    subtitle: t.courses.list.kiddosSubtitle,
+    eyebrow: t.home.programs.kiddos.name,
+  },
+  teens: {
+    title: t.courses.list.teensSectionTitle,
+    subtitle: t.courses.list.teensSubtitle,
+    eyebrow: t.home.programs.teens.name,
+  },
+  adults: {
+    title: t.courses.list.adultsSectionTitle,
+    subtitle: t.courses.list.adultsSubtitle,
+    eyebrow: t.home.programs.adults.name,
+  },
+  tutoring: {
+    title: t.courses.list.tutoringSectionTitle,
+    subtitle: t.courses.list.tutoringSubtitle,
+    eyebrow: t.home.programs.tutoring.name,
+  },
+};
+
+/** TOC chips: only for programs that actually have courses (avoid dead anchors). */
+const PROGRAM_ORDER: Program[] = ['kiddos', 'teens', 'adults', 'tutoring'];
+const tocItems = PROGRAM_ORDER
+  .filter((p) => (coursesByProgram.get(p) ?? []).length > 0)
+  .map((p) => ({
+    program: p,
+    label: programCopy[p].eyebrow,
+    tone: programTone[p],
+  }));
+
+/** Build localized URL for a course detail page. */
+function courseHref(slug: string) {
+  return loc(locale, `cursos/${slug}`);
+}
+
+/** Prefilled WhatsApp message including program + level. */
+function waCourseMessage(courseTitle: string) {
+  return `Hola STREBEN ACADEMY, me interesa el curso ${courseTitle}. ¿Me pueden compartir más información?`;
+}
+
+const cursosBaseUrl = loc(locale, 'cursos');
+const homeUrl = loc(locale, '');
+const waGeneric = whatsappLink(t.whatsapp.prefilled);
+
+/** Chip tone for CEFR badge per program tone. */
+const cefrChipTone: Record<Tone, 'brand' | 'peach' | 'sage' | 'butter'> = {
+  brand: 'brand',
+  peach: 'peach',
+  sage: 'sage',
+  butter: 'butter',
+};
+---
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section
+  class="relative isolate overflow-hidden bg-paper-grid pt-12 sm:pt-20 lg:pt-24 pb-20 sm:pb-24"
+  aria-labelledby="cursos-hero-heading"
+>
+  <!-- Decorative blobs (asymmetric layout) -->
+  <span aria-hidden="true" class="pointer-events-none absolute -left-32 top-10 -z-10 h-72 w-72 rounded-full bg-butter-200/60 blur-3xl dark:bg-butter-700/15"></span>
+  <span aria-hidden="true" class="pointer-events-none absolute -right-32 top-32 -z-10 h-96 w-96 rounded-full bg-brand-200/60 blur-3xl dark:bg-brand-700/25"></span>
+  <span aria-hidden="true" class="pointer-events-none absolute left-1/3 bottom-0 -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-sage-200/40 blur-3xl dark:bg-sage-700/10"></span>
+
+  <Container size="xl">
+    <!-- Breadcrumb-ish path -->
+    <nav aria-label="Breadcrumb" class="mb-6">
+      <ol class="flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-[color:var(--color-foreground-muted)]">
+        <li>
+          <a href={homeUrl} class="hover:text-[color:var(--color-foreground)] transition-colors">
+            {t.nav.home}
+          </a>
+        </li>
+        <li aria-hidden="true" class="text-[color:var(--color-border)]">/</li>
+        <li class="text-[color:var(--color-foreground-soft)]">{t.nav.courses}</li>
+      </ol>
+    </nav>
+
+    <div class="grid grid-cols-1 items-end gap-10 lg:grid-cols-12 lg:gap-12">
+      <!-- Left: title block -->
+      <div class="lg:col-span-8 flex flex-col gap-7">
+        <Chip tone="brand" size="md" class="self-start">
+          <Sparkles class="h-3.5 w-3.5" aria-hidden="true" />
+          {t.nav.courses} · {t.meta.siteName}
+        </Chip>
+
+        <h1 id="cursos-hero-heading" class="font-display text-display-xl text-[color:var(--color-foreground)]">
+          {t.courses.list.title}{' '}
+          <span class="relative inline-block">
+            <span class="relative z-10 wavy-underline-peach">{t.courses.list.titleAccent}</span>
+          </span>
+        </h1>
+
+        <p class="max-w-2xl text-lg sm:text-xl text-[color:var(--color-foreground-soft)] leading-relaxed">
+          {t.courses.list.subtitle}
+        </p>
+      </div>
+
+      <!-- Right: editorial info card -->
+      <div class="lg:col-span-4">
+        <div
+          class="relative rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-6 sm:p-7 shadow-[var(--shadow-card)]"
+        >
+          <span aria-hidden="true" class="absolute inset-x-6 top-0 h-1.5 rounded-b-full bg-brand-400"></span>
+
+          <div class="flex items-center gap-3 text-xs uppercase tracking-[0.18em] text-[color:var(--color-foreground-muted)] mb-5">
+            <span class="font-display text-base text-brand-500">i</span>
+            <span aria-hidden="true" class="block h-px w-6 bg-[color:var(--color-border)]"></span>
+            <span>Calendario 2026</span>
+          </div>
+
+          <dl class="space-y-4">
+            <div class="flex items-start justify-between gap-4 border-b border-[color:var(--color-border)] pb-3">
+              <dt class="text-sm text-[color:var(--color-foreground-muted)]">Preinscripciones</dt>
+              <dd class="font-display text-base text-[color:var(--color-foreground)] text-right">1 jun – 27 jul</dd>
+            </div>
+            <div class="flex items-start justify-between gap-4 border-b border-[color:var(--color-border)] pb-3">
+              <dt class="text-sm text-[color:var(--color-foreground-muted)]">Inicio</dt>
+              <dd class="font-display text-base text-[color:var(--color-foreground)] text-right">10 ago 2026</dd>
+            </div>
+            <div class="flex items-start justify-between gap-4">
+              <dt class="text-sm text-[color:var(--color-foreground-muted)]">Modalidad</dt>
+              <dd class="font-display text-base text-[color:var(--color-foreground)] text-right">{t.courses.detail.modality}</dd>
+            </div>
+          </dl>
+
+          <a
+            href={FORMS.examenColocacion}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-6 inline-flex w-full items-center justify-between gap-2 rounded-full border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-4 py-2.5 text-sm font-semibold text-[color:var(--color-foreground)] transition-[transform,border-color,background-color] hover:-translate-y-0.5 hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/30"
+          >
+            <span class="flex items-center gap-2">
+              <FileCheck class="h-4 w-4 text-brand-600" aria-hidden="true" />
+              {t.cta.placementTest}
+            </span>
+            <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+          </a>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<!-- ============================================================
+     TOC / NAVIGATION CHIPS — sticky on desktop
+============================================================ -->
+{tocItems.length > 0 && (
+  <div
+    class="sticky top-16 sm:top-20 z-20 border-y border-[color:var(--color-border)] bg-[color:var(--color-surface)]/90 backdrop-blur supports-[backdrop-filter]:bg-[color:var(--color-surface)]/75 shadow-[var(--shadow-soft)]"
+    aria-label="Índice de programas"
+  >
+    <Container size="xl">
+      <div class="flex items-center gap-3 overflow-x-auto py-4 sm:py-5 [scrollbar-width:none] [-ms-overflow-style:none]" style="-webkit-overflow-scrolling: touch;">
+        <span class="hidden sm:inline text-xs uppercase tracking-[0.18em] text-[color:var(--color-foreground-muted)] mr-2 shrink-0">Ir a</span>
+        <ul class="flex items-center gap-2 sm:gap-3">
+          {tocItems.map((item) => (
+            <li class="shrink-0">
+              <a
+                href={`#${item.program}`}
+                class="inline-flex items-center"
+                aria-label={`Ir a ${item.label}`}
+              >
+                <Chip tone={item.tone} size="md">
+                  {item.label}
+                </Chip>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Container>
+  </div>
+)}
+
+<style is:inline>
+  /* hide horizontal scrollbar on toc */
+  div[aria-label="Índice de programas"] div::-webkit-scrollbar { display: none; }
+</style>
+
+<!-- ============================================================
+     PROGRAM SECTIONS — one per program with courses
+============================================================ -->
+{PROGRAM_ORDER.map((program) => {
+  const courses = coursesByProgram.get(program) ?? [];
+  if (courses.length === 0) return null;
+  const tone = programTone[program];
+  const Icon = programIcon[program];
+  const isTutoring = program === 'tutoring';
+
+  return (
+    <Section tone={programSectionTone[program]} spacing="lg" id={program} decorative>
+      <Container size="xl">
+        <div class="mb-12 sm:mb-16 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
+          <SectionHeading
+            eyebrowNumber={programNumber[program]}
+            eyebrow={programCopy[program].eyebrow}
+            eyebrowTone={tone}
+            title={programCopy[program].title}
+            subtitle={programCopy[program].subtitle}
+            accentTone={tone}
+            size="lg"
+          />
+          <div class="flex items-center gap-3 self-start lg:self-end shrink-0">
+            <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--color-surface-elevated)] border border-[color:var(--color-border)] shadow-[var(--shadow-soft)]">
+              <Icon class="h-5 w-5 text-[color:var(--color-foreground)]" aria-hidden="true" />
+            </span>
+            <span class="text-xs uppercase tracking-[0.18em] text-[color:var(--color-foreground-muted)]">
+              {courses.length} {courses.length === 1 ? 'nivel' : 'niveles'}
+            </span>
+          </div>
+        </div>
+
+        {isTutoring ? (
+          <!-- TUTORING: horizontal layout, prominent precio -->
+          <ul class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {courses.map((c) => {
+              const href = courseHref(c.id);
+              const waMsg = whatsappLink(waCourseMessage(c.data.title));
+              return (
+                <li>
+                  <article class="group relative isolate flex h-full flex-col overflow-hidden rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-6 sm:p-7 shadow-[var(--shadow-card)] transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] hover:border-brand-300">
+                    <span aria-hidden="true" class="absolute inset-x-6 top-0 h-1.5 rounded-b-full bg-brand-400"></span>
+
+                    <div class="flex items-start justify-between gap-4">
+                      <div class="flex flex-col gap-2">
+                        <span class="text-xs uppercase tracking-[0.18em] text-[color:var(--color-foreground-muted)]">
+                          {t.courses.detail.programLabel}
+                        </span>
+                        <h3 class="font-display text-2xl sm:text-[1.75rem] leading-tight text-[color:var(--color-foreground)]">
+                          {c.data.title}
+                        </h3>
+                      </div>
+                      <span aria-hidden="true" class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[color:var(--color-border)] text-[color:var(--color-foreground-soft)] transition-[transform,background-color] group-hover:bg-brand-50 dark:group-hover:bg-brand-900/30 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                        <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+                      </span>
+                    </div>
+
+                    <p class="mt-5 text-[15px] leading-relaxed text-[color:var(--color-foreground-soft)] flex-1">
+                      {c.data.summary}
+                    </p>
+
+                    <div class="mt-6 flex items-end justify-between gap-4 border-t border-[color:var(--color-border)] pt-5">
+                      <div>
+                        <span class="block text-[11px] uppercase tracking-[0.16em] text-[color:var(--color-foreground-muted)]">
+                          {t.courses.detail.agesLabel}
+                        </span>
+                        <span class="font-display text-base text-[color:var(--color-foreground)]">{c.data.ages}</span>
+                      </div>
+                      {c.data.priceNote && (
+                        <div class="flex items-center gap-2 rounded-full bg-brand-500 px-4 py-2 text-[color:var(--color-paper)]">
+                          <Coins class="h-4 w-4" aria-hidden="true" />
+                          <span class="font-display text-base">{c.data.priceNote}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div class="mt-5 flex flex-wrap items-center gap-2">
+                      <Button href={href} variant="ink" size="sm">
+                        <span>{t.cta.learnMore}</span>
+                        <ArrowRight class="h-4 w-4" aria-hidden="true" />
+                      </Button>
+                      <Button href={waMsg} variant="whatsapp" size="sm">
+                        <MessageCircle class="h-4 w-4" aria-hidden="true" />
+                        <span>{t.cta.primary}</span>
+                      </Button>
+                    </div>
+                  </article>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <!-- REGULAR PROGRAMS: level cards in a grid -->
+          <ul class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {courses.map((c, idx) => {
+              const href = courseHref(c.id);
+              const waMsg = whatsappLink(waCourseMessage(c.data.title));
+              const learnings = c.data.learnings.slice(0, 3);
+              return (
+                <li>
+                  <article class="group relative isolate flex h-full flex-col overflow-hidden rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-6 sm:p-7 shadow-[var(--shadow-card)] transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] hover:border-brand-300">
+                    <span aria-hidden="true" class={`absolute inset-x-6 top-0 h-1.5 rounded-b-full ${tone === 'butter' ? 'bg-butter-300' : tone === 'sage' ? 'bg-sage-300' : tone === 'peach' ? 'bg-peach-300' : 'bg-brand-400'}`}></span>
+
+                    <!-- Decorative level number -->
+                    <span aria-hidden="true" class={`absolute -right-3 -bottom-8 font-display text-[8rem] leading-none opacity-20 ${tone === 'butter' ? 'text-butter-300 dark:text-butter-700' : tone === 'sage' ? 'text-sage-300 dark:text-sage-700' : tone === 'peach' ? 'text-peach-300 dark:text-peach-700' : 'text-brand-300 dark:text-brand-700'}`}>
+                      0{idx + 1}
+                    </span>
+
+                    <div class="flex items-center justify-between gap-3">
+                      <span class="text-xs uppercase tracking-[0.18em] text-[color:var(--color-foreground-muted)]">
+                        {t.courses.detail.levelLabel} 0{idx + 1}
+                      </span>
+                      <span aria-hidden="true" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[color:var(--color-border)] text-[color:var(--color-foreground-soft)] transition-[transform,background-color] group-hover:bg-brand-50 dark:group-hover:bg-brand-900/30 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                        <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+                      </span>
+                    </div>
+
+                    <h3 class="mt-4 font-display text-[1.65rem] sm:text-3xl leading-[1.1] text-[color:var(--color-foreground)]">
+                      {c.data.level}
+                    </h3>
+
+                    {c.data.cefr && (
+                      <div class="mt-3">
+                        <Chip tone={cefrChipTone[tone]} size="sm">
+                          <span class="font-display">{c.data.cefr}</span>
+                          <span class="opacity-60">·</span>
+                          <span>CEFR</span>
+                        </Chip>
+                      </div>
+                    )}
+
+                    <p class="mt-4 text-[15px] leading-relaxed text-[color:var(--color-foreground-soft)] flex-1">
+                      {c.data.summary}
+                    </p>
+
+                    {learnings.length > 0 && (
+                      <ul class="mt-5 flex flex-col gap-2.5">
+                        {learnings.map((l) => (
+                          <li class="flex items-start gap-2.5 text-sm text-[color:var(--color-foreground-soft)]">
+                            <CheckCircle2 class={`mt-0.5 h-4 w-4 shrink-0 ${tone === 'butter' ? 'text-butter-700 dark:text-butter-200' : tone === 'sage' ? 'text-sage-700 dark:text-sage-200' : tone === 'peach' ? 'text-peach-700 dark:text-peach-200' : 'text-brand-600 dark:text-brand-300'}`} aria-hidden="true" />
+                            <span class="leading-snug">{l}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    <dl class="mt-6 grid grid-cols-2 gap-3 border-t border-[color:var(--color-border)] pt-5 text-xs">
+                      <div class="flex flex-col gap-0.5">
+                        <dt class="uppercase tracking-[0.14em] text-[color:var(--color-foreground-muted)]">{t.courses.detail.agesLabel}</dt>
+                        <dd class="font-display text-sm text-[color:var(--color-foreground)]">{c.data.ages}</dd>
+                      </div>
+                      <div class="flex flex-col gap-0.5">
+                        <dt class="uppercase tracking-[0.14em] text-[color:var(--color-foreground-muted)]">{t.courses.detail.durationLabel}</dt>
+                        <dd class="font-display text-sm text-[color:var(--color-foreground)]">{c.data.duration}</dd>
+                      </div>
+                    </dl>
+
+                    <div class="mt-5 flex flex-wrap items-center gap-2">
+                      <Button href={href} variant="ink" size="sm">
+                        <span>{t.cta.learnMore}</span>
+                        <ArrowRight class="h-4 w-4" aria-hidden="true" />
+                      </Button>
+                      <Button href={waMsg} variant="whatsapp" size="sm">
+                        <MessageCircle class="h-4 w-4" aria-hidden="true" />
+                        <span>{t.cta.primary}</span>
+                      </Button>
+                    </div>
+                  </article>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </Container>
+    </Section>
+  );
+})}
+
+<!-- ============================================================
+     FINAL CTA BAND — lighter than home FinalCta, still distinctive
+============================================================ -->
+<section class="relative isolate overflow-hidden bg-[color:var(--color-ink)] py-20 sm:py-24 text-[color:var(--color-paper)]">
+  <span aria-hidden="true" class="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-brand-500/40 blur-3xl"></span>
+  <span aria-hidden="true" class="pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-peach-400/25 blur-3xl"></span>
+
+  <Container size="lg" class="relative">
+    <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-7 flex flex-col gap-5">
+        <div class="flex items-center gap-3 text-eyebrow uppercase font-semibold text-[color:var(--color-paper)]/55">
+          <span class="font-display font-normal text-base text-peach-300">→</span>
+          <span aria-hidden="true" class="block h-px w-8 bg-[color:var(--color-paper)]/20"></span>
+          <span class="tracking-[0.16em]">{t.courses.detail.ctaTitle}</span>
+        </div>
+        <h2 class="font-display text-display-md sm:text-display-lg leading-[1.1] text-[color:var(--color-paper)]">
+          ¿Listo para encontrar{' '}
+          <span class="wavy-underline-peach">tu nivel?</span>
+        </h2>
+        <p class="max-w-xl text-base sm:text-lg text-[color:var(--color-paper)]/75 leading-relaxed">
+          {t.courses.detail.ctaSubtitle}
+        </p>
+      </div>
+
+      <div class="lg:col-span-5 flex flex-wrap items-center justify-start gap-3 lg:justify-end">
+        <Button href={waGeneric} variant="whatsapp" size="lg">
+          <MessageCircle class="h-5 w-5" aria-hidden="true" />
+          <span>{t.cta.primary}</span>
+        </Button>
+        <a
+          href={FORMS.examenColocacion}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex h-14 items-center gap-2 rounded-full border border-white/20 bg-white/5 px-7 text-base font-semibold text-[color:var(--color-paper)] transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-3"
+        >
+          <FileCheck class="h-5 w-5" aria-hidden="true" />
+          <span>{t.cta.placementTest}</span>
+          <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </a>
+      </div>
+    </div>
+  </Container>
+</section>

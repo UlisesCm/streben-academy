@@ -1,0 +1,81 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends Omit<HTMLAttributes<'a'>, 'size'>, Omit<HTMLAttributes<'button'>, 'size'> {
+  variant?: 'primary' | 'secondary' | 'ghost' | 'whatsapp' | 'ink';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+  fullWidth?: boolean;
+  iconOnly?: boolean;
+  ariaLabel?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  class: className = '',
+  fullWidth = false,
+  iconOnly = false,
+  ariaLabel,
+  ...rest
+} = Astro.props;
+
+const isLink = typeof href === 'string';
+const Tag = isLink ? 'a' : 'button';
+
+const variants: Record<NonNullable<Props['variant']>, string> = {
+  primary: [
+    'bg-[color:var(--color-primary)] text-[color:var(--color-primary-foreground)]',
+    'shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-card-hover)]',
+    'hover:-translate-y-0.5 active:translate-y-0',
+  ].join(' '),
+  secondary: [
+    'bg-[color:var(--color-surface)] text-[color:var(--color-foreground)]',
+    'border border-[color:var(--color-border)] hover:border-brand-400',
+    'hover:bg-brand-50 dark:hover:bg-brand-900/30 hover:-translate-y-0.5 active:translate-y-0',
+  ].join(' '),
+  ghost: [
+    'bg-transparent text-[color:var(--color-foreground)]',
+    'hover:bg-brand-100/50 dark:hover:bg-brand-900/30',
+  ].join(' '),
+  ink: [
+    'bg-[color:var(--color-ink)] text-[color:var(--color-paper)]',
+    'hover:bg-brand-900 hover:-translate-y-0.5 active:translate-y-0',
+  ].join(' '),
+  whatsapp: [
+    'bg-[color:var(--color-whatsapp)] text-white',
+    'hover:bg-[color:var(--color-whatsapp-hover)] hover:-translate-y-0.5 active:translate-y-0',
+    'shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-card-hover)]',
+  ].join(' '),
+};
+
+const sizes: Record<NonNullable<Props['size']>, string> = {
+  sm: iconOnly ? 'h-9 w-9' : 'h-9 px-4 text-sm',
+  md: iconOnly ? 'h-11 w-11' : 'h-11 px-5 text-[15px]',
+  lg: iconOnly ? 'h-14 w-14' : 'h-14 px-7 text-base',
+};
+---
+
+<Tag
+  href={isLink ? href : undefined}
+  type={!isLink ? type : undefined}
+  aria-label={ariaLabel}
+  class:list={[
+    'inline-flex items-center justify-center gap-2 rounded-full font-semibold',
+    'transition-[transform,box-shadow,background-color,border-color,color] duration-200 ease-out',
+    'focus-visible:outline-2 focus-visible:outline-[color:var(--color-ring)] focus-visible:outline-offset-3',
+    'disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none',
+    'select-none whitespace-nowrap',
+    variants[variant],
+    sizes[size],
+    fullWidth ? 'w-full' : '',
+    className,
+  ]}
+  {...rest}
+>
+  <slot />
+</Tag>

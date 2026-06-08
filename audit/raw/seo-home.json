@@ -1,0 +1,29 @@
+{
+  "url": "https://www.strebenacademy.com/",
+  "title": "Inicio | STREBEN ACADEMY",
+  "lang": "es",
+  "description": "Welcome! ¡El periodo de preinscripciones ya comenzó! Aparta tu lugar del 01 de junio al 27 de julio en cualquiera de nuestros programas.",
+  "canonical": null,
+  "robots": "index, follow, archive",
+  "og": {
+    "og:type": "website",
+    "og:title": "Inicio | STREBEN ACADEMY",
+    "og:site_name": "STREBEN ACADEMY",
+    "og:description": "Welcome! ¡El periodo de preinscripciones ya comenzó! Aparta tu lugar del 01 de junio al 27 de julio en cualquiera de nuestros programas.",
+    "og:image": "https://storage.e.jimdo.com/cdn-cgi/image/quality=85,fit=crop,format=auto,width=1200,height=630/image/546396400/ffaa69d3-a7b2-4566-8d42-d17afd4c85b5.png",
+    "og:image:width": "1200",
+    "og:image:height": "630"
+  },
+  "twitter": {"twitter:card": "summary_large_image"},
+  "h1": ["Welcome!"],
+  "h2": ["¿Por qué elegir STREBEN ACADEMY?", "¡Descubre nuestras becas!"],
+  "imgsMissingAlt": 10,
+  "imgsTotal": 10,
+  "linksExternal": [
+    {"href": "https://forms.gle/U4UKbrSvFvBg92rx6", "text": "Preinscripción"},
+    {"href": "https://www.facebook.com/streben.academy/", "text": ""},
+    {"href": "https://www.instagram.com/streben.academy/", "text": ""}
+  ],
+  "linksInternal": ["/", "/cursos-y-programas/", "/becas/", "/alumnos/", "/sobre-nosotros/", "/galeria-y-testimonios/", "/contacto/", "/aviso-legal/", "/politica-de-privacidad/", "/configuracion-de-cookies/"],
+  "textLen": 3653
+}

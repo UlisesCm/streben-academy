@@ -1,0 +1,65 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Container from '~/components/ui/Container.astro';
+import Button from '~/components/ui/Button.astro';
+import { Home, BookOpen, ArrowUpRight } from 'lucide-astro';
+import { useTranslations } from '~/i18n';
+import { splitLocaleFromPath, loc } from '~/lib/url';
+
+const { locale } = splitLocaleFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+const e = t.errors;
+
+const homeLink = loc(locale, '');
+const coursesLink = loc(locale, 'cursos');
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${e.notFoundTitle} | STREBEN ACADEMY`}
+  description={e.notFoundBody}
+  noindex={true}
+>
+  <section class="relative isolate overflow-hidden bg-paper-grid min-h-[70dvh] flex items-center py-24 sm:py-32">
+    <!-- Blobs decorativos -->
+    <span aria-hidden="true" class="pointer-events-none absolute -left-32 top-1/4 -z-10 h-80 w-80 rounded-full bg-brand-200/50 blur-3xl dark:bg-brand-700/20"></span>
+    <span aria-hidden="true" class="pointer-events-none absolute -right-24 bottom-1/4 -z-10 h-72 w-72 rounded-full bg-peach-200/40 blur-3xl dark:bg-peach-700/15"></span>
+    <span aria-hidden="true" class="pointer-events-none absolute left-1/2 -top-20 -z-10 h-64 w-64 -translate-x-1/2 rounded-full bg-sage-200/30 blur-3xl dark:bg-sage-700/10"></span>
+
+    <Container size="sm">
+      <div class="flex flex-col items-center gap-8 text-center">
+        <!-- Número grande -->
+        <p
+          class="font-display text-[clamp(7rem,20vw,14rem)] leading-none text-transparent"
+          style="background: linear-gradient(135deg, var(--color-brand-300), var(--color-peach-300)); -webkit-background-clip: text; background-clip: text;"
+          aria-hidden="true"
+        >
+          404
+        </p>
+
+        <!-- H1 -->
+        <h1 class="font-display text-display-md text-[color:var(--color-foreground)] -mt-6">
+          {e.notFoundTitle}
+        </h1>
+
+        <!-- Descripción -->
+        <p class="max-w-md text-lg text-[color:var(--color-foreground-soft)] leading-relaxed">
+          {e.notFoundBody}
+        </p>
+
+        <!-- CTAs -->
+        <div class="flex flex-wrap items-center justify-center gap-3 mt-2">
+          <Button href={homeLink} variant="primary" size="lg">
+            <Home class="h-5 w-5" aria-hidden="true" />
+            <span>{e.backHome}</span>
+          </Button>
+          <Button href={coursesLink} variant="secondary" size="lg">
+            <BookOpen class="h-4 w-4" aria-hidden="true" />
+            <span>Ver cursos</span>
+            <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+          </Button>
+        </div>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

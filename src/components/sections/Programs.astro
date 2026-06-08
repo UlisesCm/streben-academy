@@ -1,0 +1,53 @@
+---
+import Section from '~/components/ui/Section.astro';
+import Container from '~/components/ui/Container.astro';
+import SectionHeading from '~/components/ui/SectionHeading.astro';
+import ProgramCard from './ProgramCard.astro';
+import type { Locale } from '~/i18n/config';
+import type { Dictionary } from '~/i18n/strings/es';
+import { loc } from '~/lib/url';
+
+interface Props {
+  locale: Locale;
+  t: Dictionary;
+}
+
+const { locale, t } = Astro.props;
+const p = t.home.programs;
+const cursosUrl = loc(locale, 'cursos');
+
+const programs = [
+  { ...p.kiddos, tone: 'butter' as const, anchor: '#kiddos' },
+  { ...p.teens, tone: 'sage' as const, anchor: '#teens' },
+  { ...p.adults, tone: 'peach' as const, anchor: '#adults' },
+  { ...p.tutoring, tone: 'brand' as const, anchor: '#tutoring' },
+];
+---
+
+<Section spacing="lg" tone="alt" id="programas">
+  <Container size="xl">
+    <SectionHeading
+      eyebrowNumber="03"
+      eyebrow={p.eyebrow.split('—')[1]?.trim() ?? p.eyebrow}
+      title={p.title}
+      titleAccent={p.titleAccent}
+      accentTone="sage"
+      subtitle={p.subtitle}
+      class="mb-14 sm:mb-20"
+    />
+
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+      {programs.map((program) => (
+        <ProgramCard
+          name={program.name}
+          ages={program.ages}
+          description={program.description}
+          levels={program.levels}
+          href={`${cursosUrl}${program.anchor}`}
+          tone={program.tone}
+          ctaLabel={t.cta.learnMore}
+        />
+      ))}
+    </div>
+  </Container>
+</Section>

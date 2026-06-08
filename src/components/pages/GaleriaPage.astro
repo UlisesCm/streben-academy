@@ -1,0 +1,111 @@
+---
+import Section from '~/components/ui/Section.astro';
+import Container from '~/components/ui/Container.astro';
+import Button from '~/components/ui/Button.astro';
+import Chip from '~/components/ui/Chip.astro';
+import Eyebrow from '~/components/ui/Eyebrow.astro';
+import { Image, Instagram, ArrowUpRight } from 'lucide-astro';
+import type { Locale } from '~/i18n/config';
+import type { Dictionary } from '~/i18n/strings/es';
+import { SOCIAL } from '~/lib/site';
+
+interface Props {
+  locale: Locale;
+  t: Dictionary;
+}
+
+const { t } = Astro.props;
+const g = t.gallery;
+---
+
+<!-- Hero corto -->
+<section class="relative isolate overflow-hidden bg-paper-grid pt-12 sm:pt-20 pb-16 sm:pb-24">
+  <!-- Blobs decorativos -->
+  <span aria-hidden="true" class="pointer-events-none absolute -left-32 top-8 -z-10 h-72 w-72 rounded-full bg-brand-200/50 blur-3xl dark:bg-brand-700/20"></span>
+  <span aria-hidden="true" class="pointer-events-none absolute -right-24 top-16 -z-10 h-64 w-64 rounded-full bg-peach-200/40 blur-3xl dark:bg-peach-700/15"></span>
+
+  <Container size="lg">
+    <div class="flex flex-col gap-6">
+      <Chip tone="brand" size="md" class="self-start">
+        <Image class="h-3.5 w-3.5" aria-hidden="true" />
+        {g.eyebrow}
+      </Chip>
+
+      <h1 class="font-display text-display-lg text-[color:var(--color-foreground)]">
+        {g.title}{' '}
+        <span class="wavy-underline">STREBEN</span>
+      </h1>
+
+      <p class="max-w-xl text-lg sm:text-xl text-[color:var(--color-foreground-soft)] leading-relaxed">
+        {g.subtitle}
+      </p>
+    </div>
+  </Container>
+</section>
+
+<!-- Sección "próximamente" -->
+<Section tone="brand" spacing="lg" decorative>
+  <Container size="lg">
+    <div class="flex flex-col items-center gap-10">
+      <Eyebrow label={g.eyebrow} tone="brand" class="mx-auto" />
+
+      <!-- Bloque principal dashed -->
+      <div
+        class="w-full max-w-2xl rounded-3xl border-2 border-dashed border-brand-300/70 bg-gradient-to-b from-brand-100/60 to-peach-100/40 dark:border-brand-600/40 dark:from-brand-900/30 dark:to-peach-900/20 p-12 sm:p-16 flex flex-col items-center gap-8 text-center"
+      >
+        <!-- Ícono grande placeholder -->
+        <div class="flex h-24 w-24 items-center justify-center rounded-full bg-brand-200/60 dark:bg-brand-700/30">
+          <Image
+            class="h-12 w-12 text-brand-500 dark:text-brand-300"
+            aria-hidden="true"
+          />
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <p class="font-display text-display-sm text-[color:var(--color-foreground)]">
+            Próximamente
+          </p>
+          <p class="text-base sm:text-lg text-[color:var(--color-foreground-soft)] leading-relaxed max-w-md">
+            {g.placeholder}
+          </p>
+        </div>
+
+        <Button
+          href={SOCIAL.instagram}
+          variant="primary"
+          size="lg"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Instagram class="h-5 w-5" aria-hidden="true" />
+          <span>Síguenos en Instagram</span>
+          <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </Button>
+      </div>
+    </div>
+  </Container>
+</Section>
+
+<!-- Grid placeholder de 6 tarjetas skeleton -->
+<Section tone="alt" spacing="lg">
+  <Container size="xl">
+    <p class="sr-only">Vista previa de la galería — contenido próximamente</p>
+    <div
+      class="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5"
+      aria-hidden="true"
+    >
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div
+          class:list={[
+            'rounded-2xl border-2 border-dashed border-[color:var(--color-border)]',
+            'bg-gradient-to-br',
+            i % 3 === 0 ? 'from-brand-100/50 to-brand-200/30 dark:from-brand-900/20 dark:to-brand-800/10' : '',
+            i % 3 === 1 ? 'from-peach-100/50 to-peach-200/30 dark:from-peach-900/20 dark:to-peach-800/10' : '',
+            i % 3 === 2 ? 'from-sage-100/50 to-sage-200/30 dark:from-sage-900/20 dark:to-sage-800/10' : '',
+            i % 2 === 0 ? 'aspect-[4/3]' : 'aspect-square',
+          ]}
+        />
+      ))}
+    </div>
+  </Container>
+</Section>

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /aviso-legal
+Disallow: /politica-de-privacidad
+Disallow: /configuracion-de-cookies
+
+Sitemap: https://www.strebenacademy.com/sitemap-index.xml

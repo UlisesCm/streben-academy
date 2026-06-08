@@ -1,0 +1,495 @@
+---
+import { render } from 'astro:content';
+import Container from '~/components/ui/Container.astro';
+import Section from '~/components/ui/Section.astro';
+import Chip from '~/components/ui/Chip.astro';
+import Button from '~/components/ui/Button.astro';
+import {
+  ArrowUpRight,
+  ArrowLeft,
+  ArrowRight,
+  MessageCircle,
+  FileCheck,
+  Sparkles,
+  Clock3,
+  Users,
+  GraduationCap,
+  BookOpen,
+  Languages,
+  CheckCircle2,
+  Globe2,
+  Coins,
+  Download,
+  ChevronRight,
+} from 'lucide-astro';
+import type { Locale } from '~/i18n/config';
+import type { Dictionary } from '~/i18n/strings/es';
+import type { Course } from '~/lib/courses';
+import { loc } from '~/lib/url';
+import { whatsappLink, FORMS } from '~/lib/site';
+
+type Program = 'kiddos' | 'teens' | 'adults' | 'tutoring';
+type Tone = 'brand' | 'peach' | 'sage' | 'butter';
+
+interface Props {
+  locale: Locale;
+  t: Dictionary;
+  course: Course;
+  prev?: Course;
+  next?: Course;
+}
+
+const { locale, t, course, prev, next } = Astro.props;
+const data = course.data;
+
+/** Tone derived from course.data.color (schema-driven). */
+const tone: Tone = data.color;
+
+const programLabel: Record<Program, string> = {
+  kiddos: t.home.programs.kiddos.name,
+  teens: t.home.programs.teens.name,
+  adults: t.home.programs.adults.name,
+  tutoring: t.home.programs.tutoring.name,
+};
+
+const programIcon: Record<Program, typeof Sparkles> = {
+  kiddos: Sparkles,
+  teens: GraduationCap,
+  adults: BookOpen,
+  tutoring: Languages,
+};
+
+const programSectionTitle: Record<Program, string> = {
+  kiddos: t.courses.list.kiddosSectionTitle,
+  teens: t.courses.list.teensSectionTitle,
+  adults: t.courses.list.adultsSectionTitle,
+  tutoring: t.courses.list.tutoringSectionTitle,
+};
+
+const Icon = programIcon[data.program];
+
+/** URLs */
+const homeUrl = loc(locale, '');
+const cursosUrl = loc(locale, 'cursos');
+const programAnchor = `${cursosUrl}#${data.program}`;
+
+/** Prefilled WhatsApp message for this specific course. */
+const waCourseMsg = whatsappLink(
+  `Hola STREBEN ACADEMY, me interesa el curso ${data.title}. ¿Me pueden compartir más información, horarios y costos?`,
+);
+
+/** Accent classes per tone (kept local to avoid touching shared components). */
+const accentBar: Record<Tone, string> = {
+  brand: 'bg-brand-400',
+  peach: 'bg-peach-300',
+  sage: 'bg-sage-300',
+  butter: 'bg-butter-300',
+};
+
+const accentText: Record<Tone, string> = {
+  brand: 'text-brand-600 dark:text-brand-300',
+  peach: 'text-peach-700 dark:text-peach-200',
+  sage: 'text-sage-700 dark:text-sage-200',
+  butter: 'text-butter-700 dark:text-butter-200',
+};
+
+const accentBlobLeft: Record<Tone, string> = {
+  brand: 'bg-brand-200/55 dark:bg-brand-700/25',
+  peach: 'bg-peach-200/60 dark:bg-peach-700/20',
+  sage: 'bg-sage-200/55 dark:bg-sage-700/15',
+  butter: 'bg-butter-200/60 dark:bg-butter-700/15',
+};
+
+const accentBlobRight: Record<Tone, string> = {
+  brand: 'bg-peach-200/45 dark:bg-peach-700/15',
+  peach: 'bg-brand-200/55 dark:bg-brand-700/20',
+  sage: 'bg-butter-200/50 dark:bg-butter-700/15',
+  butter: 'bg-sage-200/45 dark:bg-sage-700/15',
+};
+
+const iconChipBg: Record<Tone, string> = {
+  brand: 'bg-brand-200/60 text-brand-700 dark:bg-brand-700/30 dark:text-brand-100',
+  peach: 'bg-peach-200/60 text-peach-700 dark:bg-peach-700/30 dark:text-peach-100',
+  sage: 'bg-sage-200/60 text-sage-700 dark:bg-sage-700/30 dark:text-sage-100',
+  butter: 'bg-butter-200/60 text-butter-700 dark:bg-butter-700/30 dark:text-butter-100',
+};
+
+/** Render MDX body. */
+const { Content } = await render(course);
+
+/** Meta items shown in the hero strip. */
+const heroMeta = [
+  { label: t.courses.detail.programLabel, value: programLabel[data.program] },
+  { label: t.courses.detail.levelLabel, value: data.level },
+  ...(data.cefr ? [{ label: t.courses.detail.cefrLabel, value: data.cefr }] : []),
+  { label: t.courses.detail.agesLabel, value: data.ages },
+  { label: t.courses.detail.durationLabel, value: data.duration },
+];
+
+/** Stat card items (sticky right column). */
+const sideStats = [
+  ...(data.cefr ? [{ icon: Globe2, label: t.courses.detail.cefrLabel, value: data.cefr }] : []),
+  { icon: Users, label: t.courses.detail.agesLabel, value: data.ages },
+  { icon: Clock3, label: t.courses.detail.durationLabel, value: data.duration },
+  { icon: Sparkles, label: t.courses.detail.modalityLabel, value: t.courses.detail.modality },
+];
+---
+
+<!-- ============================================================
+     HERO — asymmetric, with sticky info card
+============================================================ -->
+<section
+  class="relative isolate overflow-hidden bg-paper-grid pt-10 sm:pt-14 lg:pt-20 pb-16 sm:pb-20"
+  aria-labelledby="curso-heading"
+>
+  <span aria-hidden="true" class={`pointer-events-none absolute -left-32 top-12 -z-10 h-72 w-72 rounded-full blur-3xl ${accentBlobLeft[tone]}`}></span>
+  <span aria-hidden="true" class={`pointer-events-none absolute -right-32 top-32 -z-10 h-96 w-96 rounded-full blur-3xl ${accentBlobRight[tone]}`}></span>
+
+  <Container size="xl">
+    <!-- Breadcrumb -->
+    <nav aria-label="Breadcrumb" class="mb-7">
+      <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs uppercase tracking-[0.16em] text-[color:var(--color-foreground-muted)]">
+        <li>
+          <a href={homeUrl} class="hover:text-[color:var(--color-foreground)] transition-colors">
+            {t.nav.home}
+          </a>
+        </li>
+        <li aria-hidden="true"><ChevronRight class="h-3 w-3 text-[color:var(--color-border)]" /></li>
+        <li>
+          <a href={cursosUrl} class="hover:text-[color:var(--color-foreground)] transition-colors">
+            {t.nav.courses}
+          </a>
+        </li>
+        <li aria-hidden="true"><ChevronRight class="h-3 w-3 text-[color:var(--color-border)]" /></li>
+        <li>
+          <a href={programAnchor} class="hover:text-[color:var(--color-foreground)] transition-colors">
+            {programSectionTitle[data.program]}
+          </a>
+        </li>
+        <li aria-hidden="true"><ChevronRight class="h-3 w-3 text-[color:var(--color-border)]" /></li>
+        <li class="text-[color:var(--color-foreground-soft)] normal-case tracking-normal">{data.level}</li>
+      </ol>
+    </nav>
+
+    <div class="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
+      <!-- LEFT: title + meta + CTAs -->
+      <div class="lg:col-span-7 flex flex-col gap-7">
+        <div class="flex flex-wrap items-center gap-3">
+          <Chip tone={tone} size="md">
+            <Icon class="h-3.5 w-3.5" aria-hidden="true" />
+            <span>{programLabel[data.program]}</span>
+          </Chip>
+          {data.cefr && (
+            <Chip tone="outline" size="md">
+              <span class="font-display">{data.cefr}</span>
+              <span class="opacity-60">·</span>
+              <span>CEFR</span>
+            </Chip>
+          )}
+        </div>
+
+        <h1 id="curso-heading" class="font-display text-display-xl leading-[1.05] text-[color:var(--color-foreground)]">
+          {data.title}
+        </h1>
+
+        <p class="max-w-2xl text-lg sm:text-xl text-[color:var(--color-foreground-soft)] leading-relaxed">
+          {data.summary}
+        </p>
+
+        <!-- Meta strip -->
+        <dl class="grid grid-cols-2 gap-x-6 gap-y-5 border-t border-[color:var(--color-border)] pt-6 sm:grid-cols-3">
+          {heroMeta.map((m) => (
+            <div class="flex flex-col gap-1">
+              <dt class="text-[11px] uppercase tracking-[0.16em] text-[color:var(--color-foreground-muted)]">
+                {m.label}
+              </dt>
+              <dd class="font-display text-base sm:text-lg text-[color:var(--color-foreground)] leading-snug">
+                {m.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+
+        <!-- CTAs -->
+        <div class="flex flex-wrap items-center gap-3 pt-2">
+          <Button href={waCourseMsg} variant="whatsapp" size="lg">
+            <MessageCircle class="h-5 w-5" aria-hidden="true" />
+            <span>{t.cta.primary}</span>
+          </Button>
+          <a
+            href={FORMS.examenColocacion}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex h-14 items-center gap-2 rounded-full border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-7 text-base font-semibold text-[color:var(--color-foreground)] transition-[transform,border-color,background-color] hover:-translate-y-0.5 hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/30 focus-visible:outline-2 focus-visible:outline-[color:var(--color-ring)] focus-visible:outline-offset-3"
+          >
+            <FileCheck class="h-5 w-5" aria-hidden="true" />
+            <span>{t.cta.placementTest}</span>
+            <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+          </a>
+        </div>
+      </div>
+
+      <!-- RIGHT: sticky stat card -->
+      <aside class="lg:col-span-5">
+        <div class="lg:sticky lg:top-28">
+          <div
+            class="relative rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-6 sm:p-7 shadow-[var(--shadow-card)]"
+          >
+            <span aria-hidden="true" class={`absolute inset-x-6 top-0 h-1.5 rounded-b-full ${accentBar[tone]}`}></span>
+
+            <div class="flex items-center justify-between gap-4 mb-6">
+              <div class="flex items-center gap-3">
+                <span class={`inline-flex h-11 w-11 items-center justify-center rounded-2xl ${iconChipBg[tone]}`}>
+                  <Icon class="h-5 w-5" aria-hidden="true" />
+                </span>
+                <div class="flex flex-col leading-tight">
+                  <span class="text-xs uppercase tracking-[0.16em] text-[color:var(--color-foreground-muted)]">
+                    {programSectionTitle[data.program]}
+                  </span>
+                  <span class="font-display text-base text-[color:var(--color-foreground)]">{data.level}</span>
+                </div>
+              </div>
+              {data.cefr && (
+                <span class={`font-display text-3xl ${accentText[tone]}`}>{data.cefr}</span>
+              )}
+            </div>
+
+            <dl class="divide-y divide-[color:var(--color-border)]">
+              {sideStats.map((s) => (
+                <div class="flex items-center justify-between gap-4 py-3">
+                  <dt class="flex items-center gap-2.5 text-sm text-[color:var(--color-foreground-muted)]">
+                    <s.icon class="h-4 w-4" aria-hidden="true" />
+                    <span>{s.label}</span>
+                  </dt>
+                  <dd class="font-display text-sm sm:text-base text-[color:var(--color-foreground)] text-right">
+                    {s.value}
+                  </dd>
+                </div>
+              ))}
+              {data.materials && (
+                <div class="flex items-start justify-between gap-4 py-3">
+                  <dt class="flex items-center gap-2.5 text-sm text-[color:var(--color-foreground-muted)] shrink-0">
+                    <BookOpen class="h-4 w-4" aria-hidden="true" />
+                    <span>{t.courses.detail.materials}</span>
+                  </dt>
+                  <dd class="text-sm text-[color:var(--color-foreground)] text-right leading-snug">
+                    {data.materials}
+                  </dd>
+                </div>
+              )}
+              {data.priceNote && (
+                <div class="flex items-center justify-between gap-4 py-3">
+                  <dt class="flex items-center gap-2.5 text-sm text-[color:var(--color-foreground-muted)]">
+                    <Coins class="h-4 w-4" aria-hidden="true" />
+                    <span>Precio</span>
+                  </dt>
+                  <dd class="font-display text-base text-[color:var(--color-foreground)]">
+                    {data.priceNote}
+                  </dd>
+                </div>
+              )}
+            </dl>
+
+            <Button href={waCourseMsg} variant="primary" size="md" fullWidth class="mt-6">
+              <MessageCircle class="h-4 w-4" aria-hidden="true" />
+              <span>{t.cta.primary}</span>
+            </Button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </Container>
+</section>
+
+<!-- ============================================================
+     LO QUE VAS A APRENDER — bullets
+============================================================ -->
+{data.learnings.length > 0 && (
+  <Section spacing="md" tone="alt">
+    <Container size="xl">
+      <div class="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16">
+        <div class="lg:col-span-4">
+          <div class="flex items-center gap-3 text-eyebrow uppercase font-semibold mb-5">
+            <span class={`font-display font-normal text-base sm:text-lg ${accentText[tone]}`}>01</span>
+            <span aria-hidden="true" class="block h-px w-8 bg-[color:var(--color-border)]"></span>
+            <span class="tracking-[0.16em] text-[color:var(--color-foreground-muted)]">Objetivos</span>
+          </div>
+          <h2 class="font-display text-display-md leading-[1.1] text-[color:var(--color-foreground)]">
+            {t.courses.detail.whatYoullLearn}
+          </h2>
+          <p class="mt-5 text-base text-[color:var(--color-foreground-soft)] leading-relaxed">
+            Al terminar este nivel, serás capaz de poner en práctica habilidades concretas y medibles, no solo memorizar reglas.
+          </p>
+        </div>
+
+        <ul class="lg:col-span-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {data.learnings.map((l, idx) => (
+            <li class="group flex items-start gap-3 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-5 shadow-[var(--shadow-soft)] transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
+              <span class={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${iconChipBg[tone]}`}>
+                <CheckCircle2 class="h-4 w-4" aria-hidden="true" />
+              </span>
+              <div class="flex flex-col gap-1">
+                <span class="text-[11px] uppercase tracking-[0.16em] text-[color:var(--color-foreground-muted)]">
+                  Objetivo 0{idx + 1}
+                </span>
+                <span class="text-[15px] leading-snug text-[color:var(--color-foreground-soft)]">
+                  {l}
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Container>
+  </Section>
+)}
+
+<!-- ============================================================
+     MDX BODY — Lo que vivirás en clase
+============================================================ -->
+<Section spacing="md" tone="default">
+  <Container size="md">
+    <div class="flex items-center gap-3 text-eyebrow uppercase font-semibold mb-6">
+      <span class={`font-display font-normal text-base sm:text-lg ${accentText[tone]}`}>02</span>
+      <span aria-hidden="true" class="block h-px w-8 bg-[color:var(--color-border)]"></span>
+      <span class="tracking-[0.16em] text-[color:var(--color-foreground-muted)]">Detalle del nivel</span>
+    </div>
+
+    <div class="prose-streben">
+      <Content />
+    </div>
+
+    {data.syllabusUrl && (
+      <a
+        href={data.syllabusUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="mt-10 group flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-6 sm:p-7 shadow-[var(--shadow-card)] transition-[transform,box-shadow,border-color] hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)] hover:border-brand-300"
+      >
+        <div class="flex items-center gap-4">
+          <span class={`inline-flex h-12 w-12 items-center justify-center rounded-2xl ${iconChipBg[tone]}`}>
+            <Download class="h-5 w-5" aria-hidden="true" />
+          </span>
+          <div class="flex flex-col">
+            <span class="text-xs uppercase tracking-[0.16em] text-[color:var(--color-foreground-muted)]">
+              PDF · Plan de estudios
+            </span>
+            <span class="font-display text-lg text-[color:var(--color-foreground)]">
+              {t.cta.downloadSyllabus}
+            </span>
+          </div>
+        </div>
+        <span aria-hidden="true" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--color-border)] text-[color:var(--color-foreground-soft)] transition-[transform,background-color] group-hover:bg-brand-50 dark:group-hover:bg-brand-900/30 group-hover:translate-x-0.5">
+          <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </span>
+      </a>
+    )}
+  </Container>
+</Section>
+
+<!-- ============================================================
+     PREV / NEXT navigation
+============================================================ -->
+{(prev || next) && (
+  <Section spacing="sm" tone="alt">
+    <Container size="xl">
+      <div class="flex items-center gap-3 mb-8 text-eyebrow uppercase font-semibold">
+        <span class={`font-display font-normal text-base sm:text-lg ${accentText[tone]}`}>03</span>
+        <span aria-hidden="true" class="block h-px w-8 bg-[color:var(--color-border)]"></span>
+        <span class="tracking-[0.16em] text-[color:var(--color-foreground-muted)]">Continúa explorando</span>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {prev ? (
+          <a
+            href={loc(locale, `cursos/${prev.id}`)}
+            class="group flex flex-col gap-3 rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-6 sm:p-7 shadow-[var(--shadow-card)] transition-[transform,box-shadow,border-color] hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] hover:border-brand-300"
+          >
+            <span class="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-[color:var(--color-foreground-muted)]">
+              <ArrowLeft class="h-3.5 w-3.5" aria-hidden="true" />
+              {t.courses.detail.prev}
+            </span>
+            <span class="font-display text-2xl text-[color:var(--color-foreground)] leading-tight">
+              {prev.data.level}
+            </span>
+            <span class="text-sm text-[color:var(--color-foreground-soft)] leading-relaxed line-clamp-2">
+              {prev.data.summary}
+            </span>
+            {prev.data.cefr && (
+              <span class="mt-1">
+                <Chip tone="outline" size="sm">
+                  <span class="font-display">{prev.data.cefr}</span>
+                </Chip>
+              </span>
+            )}
+          </a>
+        ) : <span aria-hidden="true"></span>}
+
+        {next ? (
+          <a
+            href={loc(locale, `cursos/${next.id}`)}
+            class="group flex flex-col gap-3 rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-6 sm:p-7 shadow-[var(--shadow-card)] transition-[transform,box-shadow,border-color] hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] hover:border-brand-300 text-right items-end"
+          >
+            <span class="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-[color:var(--color-foreground-muted)]">
+              {t.courses.detail.next}
+              <ArrowRight class="h-3.5 w-3.5" aria-hidden="true" />
+            </span>
+            <span class="font-display text-2xl text-[color:var(--color-foreground)] leading-tight">
+              {next.data.level}
+            </span>
+            <span class="text-sm text-[color:var(--color-foreground-soft)] leading-relaxed line-clamp-2">
+              {next.data.summary}
+            </span>
+            {next.data.cefr && (
+              <span class="mt-1">
+                <Chip tone="outline" size="sm">
+                  <span class="font-display">{next.data.cefr}</span>
+                </Chip>
+              </span>
+            )}
+          </a>
+        ) : <span aria-hidden="true"></span>}
+      </div>
+    </Container>
+  </Section>
+)}
+
+<!-- ============================================================
+     FINAL CTA — same DNA as list page
+============================================================ -->
+<section class="relative isolate overflow-hidden bg-[color:var(--color-ink)] py-20 sm:py-24 text-[color:var(--color-paper)]">
+  <span aria-hidden="true" class="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-brand-500/40 blur-3xl"></span>
+  <span aria-hidden="true" class="pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-peach-400/25 blur-3xl"></span>
+
+  <Container size="lg" class="relative">
+    <div class="flex flex-col items-center text-center gap-6">
+      <div class="flex items-center gap-3 text-eyebrow uppercase font-semibold text-[color:var(--color-paper)]/55">
+        <span class="font-display font-normal text-base text-peach-300">04</span>
+        <span aria-hidden="true" class="block h-px w-8 bg-[color:var(--color-paper)]/20"></span>
+        <span class="tracking-[0.16em]">{t.courses.detail.ctaTitle}</span>
+      </div>
+      <h2 class="font-display text-display-md sm:text-display-lg max-w-3xl leading-[1.1] text-[color:var(--color-paper)]">
+        {t.courses.detail.ctaTitle}
+      </h2>
+      <p class="max-w-xl text-base sm:text-lg text-[color:var(--color-paper)]/75 leading-relaxed">
+        {t.courses.detail.ctaSubtitle}
+      </p>
+      <div class="mt-2 flex flex-wrap items-center justify-center gap-3">
+        <Button href={waCourseMsg} variant="whatsapp" size="lg">
+          <MessageCircle class="h-5 w-5" aria-hidden="true" />
+          <span>{t.cta.primary}</span>
+        </Button>
+        <a
+          href={FORMS.examenColocacion}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex h-14 items-center gap-2 rounded-full border border-white/20 bg-white/5 px-7 text-base font-semibold text-[color:var(--color-paper)] transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-3"
+        >
+          <FileCheck class="h-5 w-5" aria-hidden="true" />
+          <span>{t.cta.placementTest}</span>
+          <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </a>
+      </div>
+    </div>
+  </Container>
+</section>

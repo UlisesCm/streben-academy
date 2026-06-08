@@ -1,0 +1,206 @@
+---
+import Logo from './Logo.astro';
+import Button from './ui/Button.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { Menu, X, ArrowUpRight } from 'lucide-astro';
+import type { Locale } from '~/i18n/config';
+import type { Dictionary } from '~/i18n/strings/es';
+import { loc } from '~/lib/url';
+import { whatsappLink } from '~/lib/site';
+
+interface Props {
+  locale: Locale;
+  currentPath: string;
+  t: Dictionary;
+}
+
+const { locale, currentPath, t } = Astro.props;
+
+const navLinks = [
+  { href: loc(locale, ''), label: t.nav.home },
+  { href: loc(locale, 'sobre-nosotros'), label: t.nav.about },
+  { href: loc(locale, 'cursos'), label: t.nav.courses },
+  { href: loc(locale, 'becas'), label: t.nav.scholarships },
+  { href: loc(locale, 'testimonios'), label: t.nav.testimonials },
+  { href: loc(locale, 'contacto'), label: t.nav.contact },
+];
+
+const stripTrailing = (s: string) => (s.length > 1 ? s.replace(/\/$/, '') : s);
+const isActive = (href: string) => stripTrailing(currentPath) === stripTrailing(href);
+
+const ctaHref = whatsappLink(t.whatsapp.prefilled);
+---
+
+<header
+  data-header
+  class="sticky top-0 z-30 border-b border-transparent backdrop-blur-md transition-[background-color,border-color,box-shadow] duration-200 data-[scrolled=true]:border-[color:var(--color-border)] data-[scrolled=true]:bg-[color:var(--color-surface)]/85 data-[scrolled=true]:shadow-[var(--shadow-soft)]"
+>
+  <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5 sm:h-20 sm:px-7 lg:px-10">
+    <Logo href={loc(locale, '')} ariaLabel={t.meta.siteName + ' — ' + t.nav.home} />
+
+    <nav aria-label="Primary" class="hidden lg:flex">
+      <ul class="flex items-center gap-1 rounded-full border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)]/70 p-1.5 shadow-[var(--shadow-soft)] backdrop-blur">
+        {navLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              aria-current={isActive(link.href) ? 'page' : undefined}
+              class:list={[
+                'inline-flex h-9 items-center rounded-full px-3.5 text-sm font-medium transition-colors',
+                isActive(link.href)
+                  ? 'bg-brand-100 text-[color:var(--color-foreground)] dark:bg-brand-800/50'
+                  : 'text-[color:var(--color-foreground-soft)] hover:bg-brand-50 hover:text-[color:var(--color-foreground)] dark:hover:bg-brand-900/30',
+              ]}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <div class="hidden md:flex items-center gap-2">
+        <LanguageSwitcher
+          currentLocale={locale}
+          currentPath={currentPath}
+          menuLabel={t.nav.languageMenu}
+        />
+        <ThemeToggle labels={{
+          menu: t.nav.themeMenu,
+          light: t.themes.light,
+          dark: t.themes.dark,
+          system: t.themes.system,
+        }} />
+      </div>
+
+      <a
+        href={ctaHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hidden md:inline-flex h-10 items-center gap-1.5 rounded-full bg-[color:var(--color-ink)] px-4 text-sm font-semibold text-[color:var(--color-paper)] transition-[transform,background-color] hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0 focus-visible:outline-2 focus-visible:outline-[color:var(--color-ring)] focus-visible:outline-offset-3"
+      >
+        <span>{t.nav.requestInfo}</span>
+        <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+      </a>
+
+      <button
+        type="button"
+        data-mobile-trigger
+        aria-label={t.nav.menu}
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] text-[color:var(--color-foreground)] transition-colors hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-[color:var(--color-ring)] focus-visible:outline-offset-3 lg:hidden dark:hover:bg-brand-900/30"
+      >
+        <Menu class="h-5 w-5" aria-hidden="true" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile sheet -->
+  <div
+    id="mobile-nav"
+    data-mobile-sheet
+    aria-hidden="true"
+    class="invisible fixed inset-0 z-40 opacity-0 transition-[opacity,visibility] duration-300 ease-out data-[open=true]:visible data-[open=true]:opacity-100 lg:hidden"
+  >
+    <button
+      type="button"
+      data-mobile-backdrop
+      aria-label={t.nav.closeMenu}
+      class="absolute inset-0 bg-[color:var(--color-ink)]/40 backdrop-blur-sm"
+    ></button>
+    <div
+      class="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col gap-6 overflow-y-auto bg-[color:var(--color-surface)] p-6 shadow-[var(--shadow-pop)] transition-transform duration-300 ease-out data-[open=true]:translate-x-0 [div[data-open=false]_&]:translate-x-full"
+      data-mobile-panel
+    >
+      <div class="flex items-center justify-between">
+        <Logo href={loc(locale, '')} ariaLabel={t.meta.siteName} />
+        <button
+          type="button"
+          data-mobile-close
+          aria-label={t.nav.closeMenu}
+          class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] text-[color:var(--color-foreground)] hover:bg-brand-50 dark:hover:bg-brand-900/30"
+        >
+          <X class="h-5 w-5" aria-hidden="true" />
+        </button>
+      </div>
+
+      <nav aria-label="Primary mobile">
+        <ul class="flex flex-col gap-1">
+          {navLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+                class:list={[
+                  'block rounded-2xl px-4 py-3 text-lg font-display transition-colors',
+                  isActive(link.href)
+                    ? 'bg-brand-100 text-[color:var(--color-foreground)] dark:bg-brand-800/50'
+                    : 'text-[color:var(--color-foreground-soft)] hover:bg-brand-50 hover:text-[color:var(--color-foreground)] dark:hover:bg-brand-900/30',
+                ]}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="mt-auto flex flex-col gap-4">
+        <div class="flex items-center justify-between gap-2 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] px-4 py-3">
+          <LanguageSwitcher
+            currentLocale={locale}
+            currentPath={currentPath}
+            menuLabel={t.nav.languageMenu}
+          />
+          <ThemeToggle labels={{
+            menu: t.nav.themeMenu,
+            light: t.themes.light,
+            dark: t.themes.dark,
+            system: t.themes.system,
+          }} />
+        </div>
+        <Button href={ctaHref} variant="ink" size="lg" fullWidth>
+          <span>{t.nav.requestInfo}</span>
+          <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </Button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    const header = document.querySelector<HTMLElement>('[data-header]');
+    if (header) {
+      const onScroll = () => {
+        header.dataset.scrolled = window.scrollY > 8 ? 'true' : 'false';
+      };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+
+    const sheet = document.querySelector<HTMLElement>('[data-mobile-sheet]');
+    const trigger = document.querySelector<HTMLButtonElement>('[data-mobile-trigger]');
+    const close = document.querySelector<HTMLButtonElement>('[data-mobile-close]');
+    const backdrop = document.querySelector<HTMLButtonElement>('[data-mobile-backdrop]');
+    if (!sheet || !trigger) return;
+
+    const setOpen = (open: boolean) => {
+      sheet.dataset.open = open ? 'true' : 'false';
+      sheet.setAttribute('aria-hidden', open ? 'false' : 'true');
+      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+    };
+    trigger.addEventListener('click', () => setOpen(true));
+    close?.addEventListener('click', () => setOpen(false));
+    backdrop?.addEventListener('click', () => setOpen(false));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && sheet.dataset.open === 'true') setOpen(false);
+    });
+  }
+  initHeader();
+  document.addEventListener('astro:after-swap', initHeader);
+</script>

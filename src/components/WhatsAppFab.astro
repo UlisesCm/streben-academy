@@ -1,0 +1,26 @@
+---
+import { whatsappLink } from '~/lib/site';
+import { MessageCircle } from 'lucide-astro';
+
+interface Props {
+  label: string;
+  message: string;
+  ariaLabel: string;
+}
+
+const { label, message, ariaLabel } = Astro.props;
+const href = whatsappLink(message);
+---
+
+<a
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label={ariaLabel}
+  class="group fixed bottom-5 right-5 z-50 isolate inline-flex h-14 items-center justify-center gap-2 overflow-hidden rounded-full bg-[color:var(--color-whatsapp)] pl-4 pr-5 text-white shadow-[var(--shadow-pop)] ring-pulse focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-3 transition-[transform,box-shadow,padding] duration-300 ease-out hover:scale-105 active:scale-95 sm:bottom-6 sm:right-6"
+>
+  <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/15">
+    <MessageCircle class="h-5 w-5" aria-hidden="true" />
+  </span>
+  <span class="hidden font-semibold sm:inline">{label}</span>
+</a>

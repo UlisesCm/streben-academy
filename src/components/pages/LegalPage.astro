@@ -1,0 +1,52 @@
+---
+import Section from '~/components/ui/Section.astro';
+import Container from '~/components/ui/Container.astro';
+import Eyebrow from '~/components/ui/Eyebrow.astro';
+import { Scale } from 'lucide-astro';
+
+interface Props {
+  title: string;
+  lastUpdate: string;
+  body: readonly string[];
+}
+
+const { title, lastUpdate, body } = Astro.props;
+---
+
+<!-- Hero ligero -->
+<section class="relative isolate overflow-hidden bg-paper-grid pt-12 sm:pt-20 pb-14 sm:pb-20">
+  <span aria-hidden="true" class="pointer-events-none absolute -left-24 top-8 -z-10 h-64 w-64 rounded-full bg-brand-200/40 blur-3xl dark:bg-brand-800/20"></span>
+
+  <Container size="md">
+    <div class="flex flex-col gap-5">
+      <Eyebrow
+        label="Legal"
+        tone="brand"
+      />
+
+      <div class="flex items-start gap-4">
+        <div class="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-200/70 dark:bg-brand-700/30">
+          <Scale class="h-5 w-5 text-brand-700 dark:text-brand-200" aria-hidden="true" />
+        </div>
+        <h1 class="font-display text-display-md text-[color:var(--color-foreground)]">
+          {title}
+        </h1>
+      </div>
+
+      <p class="text-xs uppercase tracking-[0.12em] text-[color:var(--color-foreground-muted)]">
+        {lastUpdate}
+      </p>
+    </div>
+  </Container>
+</section>
+
+<!-- Cuerpo de texto -->
+<Section tone="default" spacing="md">
+  <Container size="md">
+    <div class="prose-streben flex flex-col gap-0">
+      {body.map((paragraph) => (
+        <p class="prose-streben">{paragraph}</p>
+      ))}
+    </div>
+  </Container>
+</Section>

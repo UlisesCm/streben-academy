@@ -1,0 +1,61 @@
+---
+import Section from '~/components/ui/Section.astro';
+import Container from '~/components/ui/Container.astro';
+import SectionHeading from '~/components/ui/SectionHeading.astro';
+import { Crown, Sparkles, Users, GraduationCap } from 'lucide-astro';
+import type { Dictionary } from '~/i18n/strings/es';
+
+interface Props {
+  t: Dictionary;
+}
+
+const { t } = Astro.props;
+const b = t.home.benefits;
+
+const icons = [Crown, Sparkles, Users, GraduationCap];
+const tones = ['brand', 'peach', 'sage', 'butter'] as const;
+const iconBg: Record<(typeof tones)[number], string> = {
+  brand: 'bg-brand-200/70 text-brand-700 dark:bg-brand-700/40 dark:text-brand-100',
+  peach: 'bg-peach-200/70 text-peach-700 dark:bg-peach-700/30 dark:text-peach-200',
+  sage:  'bg-sage-200/70 text-sage-700 dark:bg-sage-700/30 dark:text-sage-200',
+  butter:'bg-butter-200/70 text-butter-700 dark:bg-butter-700/30 dark:text-butter-200',
+};
+---
+
+<Section spacing="lg" tone="default">
+  <Container size="xl">
+    <div class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16 items-start">
+      <div class="lg:col-span-5 lg:sticky lg:top-32">
+        <SectionHeading
+          eyebrowNumber="02"
+          eyebrow={b.eyebrow.split('—')[1]?.trim() ?? b.eyebrow}
+          title={b.title}
+          titleAccent={b.titleAccent}
+          accentTone="peach"
+        />
+      </div>
+
+      <ul class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-5">
+        {b.items.map((item, idx) => {
+          const Icon = icons[idx % icons.length];
+          const tone = tones[idx % tones.length];
+          return (
+            <li
+              class="group flex flex-col gap-4 rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-6 shadow-[var(--shadow-card)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)]"
+            >
+              <span class:list={['inline-flex h-12 w-12 items-center justify-center rounded-2xl', iconBg[tone]]}>
+                <Icon class="h-5 w-5" aria-hidden="true" />
+              </span>
+              <h3 class="font-display text-xl text-[color:var(--color-foreground)]">
+                {item.title}
+              </h3>
+              <p class="text-[color:var(--color-foreground-soft)] leading-relaxed text-[15px]">
+                {item.body}
+              </p>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </Container>
+</Section>

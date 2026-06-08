@@ -1,0 +1,619 @@
+---
+/**
+ * ContactoPage — Página de contacto para STREBEN ACADEMY.
+ * Layout split 60/40: formulario Web3Forms a la izquierda + accesos directos a la derecha.
+ * Sin backend. Toda la lógica del form vive en el cliente (vanilla JS pequeño).
+ */
+import Section from '~/components/ui/Section.astro';
+import Container from '~/components/ui/Container.astro';
+import Button from '~/components/ui/Button.astro';
+import Chip from '~/components/ui/Chip.astro';
+import Eyebrow from '~/components/ui/Eyebrow.astro';
+import {
+  ArrowUpRight,
+  MessageCircle,
+  Phone,
+  Mail,
+  Facebook,
+  Instagram,
+  Send,
+  Clock,
+  Sparkles,
+  CheckCircle2,
+  AlertCircle,
+  Globe2,
+  ShieldCheck,
+} from 'lucide-astro';
+import type { Locale } from '~/i18n/config';
+import type { Dictionary } from '~/i18n/strings/es';
+import { CONTACT, SOCIAL, whatsappLink, mailtoLink, SITE } from '~/lib/site';
+
+interface Props {
+  locale: Locale;
+  t: Dictionary;
+}
+
+const { locale, t } = Astro.props;
+const c = t.contactPage;
+
+// API key con fallback explícito si no está configurada en .env.
+// El comentario HTML avisa al dev/cliente antes del deploy.
+const WEB3FORMS_KEY =
+  import.meta.env.PUBLIC_WEB3FORMS_KEY ||
+  'PENDING_KEY_REPLACE_BEFORE_DEPLOY';
+const isKeyConfigured =
+  WEB3FORMS_KEY !== 'PENDING_KEY_REPLACE_BEFORE_DEPLOY' &&
+  WEB3FORMS_KEY !== 'your-web3forms-access-key-here';
+
+// URL de redirect post-submit (mismo idioma, querystring ?contact=ok).
+const redirectUrl = `${SITE.url}${
+  locale === 'es' ? '/contacto' : `/${locale}/contacto`
+}?contact=ok#status`;
+
+// Links directos
+const waLink = whatsappLink(t.whatsapp.prefilled);
+const telLink = `tel:+52${CONTACT.phone}`;
+const emailLink = mailtoLink(
+  'Consulta desde strebenacademy.com',
+  'Hola STREBEN ACADEMY,\n\n',
+);
+
+// Bloques de "escríbenos directo": item con icono, label, valor, href, tono.
+const directContacts = [
+  {
+    key: 'whatsapp',
+    label: c.direct.whatsappLabel,
+    value: CONTACT.whatsappDisplay,
+    href: waLink,
+    icon: MessageCircle,
+    tone: 'brand' as const,
+    external: true,
+  },
+  {
+    key: 'phone',
+    label: c.direct.phoneLabel,
+    value: CONTACT.whatsappDisplay,
+    href: telLink,
+    icon: Phone,
+    tone: 'peach' as const,
+    external: false,
+  },
+  {
+    key: 'email',
+    label: c.direct.emailLabel,
+    value: CONTACT.email,
+    href: emailLink,
+    icon: Mail,
+    tone: 'sage' as const,
+    external: false,
+  },
+] as const;
+
+const toneStyles: Record<
+  'brand' | 'peach' | 'sage' | 'butter',
+  { card: string; iconBg: string; arrow: string }
+> = {
+  brand: {
+    card: 'hover:bg-brand-100/60 hover:border-brand-300 dark:hover:bg-brand-800/30 dark:hover:border-brand-600/40',
+    iconBg:
+      'bg-brand-200/70 text-brand-700 dark:bg-brand-700/40 dark:text-brand-100',
+    arrow: 'text-brand-500',
+  },
+  peach: {
+    card: 'hover:bg-peach-100/60 hover:border-peach-300 dark:hover:bg-peach-700/25 dark:hover:border-peach-500/30',
+    iconBg:
+      'bg-peach-200/70 text-peach-700 dark:bg-peach-700/40 dark:text-peach-100',
+    arrow: 'text-peach-500',
+  },
+  sage: {
+    card: 'hover:bg-sage-100/60 hover:border-sage-300 dark:hover:bg-sage-700/25 dark:hover:border-sage-500/30',
+    iconBg:
+      'bg-sage-200/70 text-sage-700 dark:bg-sage-700/40 dark:text-sage-100',
+    arrow: 'text-sage-500',
+  },
+  butter: {
+    card: 'hover:bg-butter-100/60 hover:border-butter-300 dark:hover:bg-butter-700/25 dark:hover:border-butter-500/30',
+    iconBg:
+      'bg-butter-200/70 text-butter-700 dark:bg-butter-700/40 dark:text-butter-100',
+    arrow: 'text-butter-500',
+  },
+};
+
+// IDs estables para asociar labels y aria.
+const ID = {
+  name: 'contact-name',
+  email: 'contact-email',
+  phone: 'contact-phone',
+  program: 'contact-program',
+  message: 'contact-message',
+} as const;
+---
+
+{
+  /* Note: WEB3FORMS_KEY pending — see .env.example and README for setup instructions. */
+  !isKeyConfigured && (
+    <></>
+  )
+}
+
+<!-- ============================================================
+     HERO — corto, sin overflow visual para que el form respire
+     ============================================================ -->
+<section
+  class="relative isolate overflow-hidden pt-16 sm:pt-24 lg:pt-28 pb-12 sm:pb-16"
+>
+  <Container size="xl">
+    <div class="flex flex-col gap-7 max-w-3xl">
+      <Chip tone="brand" size="md" class="self-start">
+        <Sparkles class="h-3.5 w-3.5" aria-hidden="true" />
+        {c.eyebrow}
+      </Chip>
+
+      <h1
+        class="font-display text-display-xl text-[color:var(--color-foreground)] leading-[1]"
+      >
+        {c.title}{' '}
+        <span class="relative inline-block">
+          <span class="relative z-10 wavy-underline">{c.titleAccent}</span>
+        </span>
+      </h1>
+
+      <p
+        class="text-lg sm:text-xl text-[color:var(--color-foreground-soft)] leading-relaxed"
+      >
+        {c.subtitle}
+      </p>
+    </div>
+  </Container>
+</section>
+
+<!-- ============================================================
+     SPLIT principal — form (7) + direct (5)
+     ============================================================ -->
+<Section spacing="lg" tone="default">
+  <Container size="xl">
+    <div class="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
+      <!-- ===== Formulario Web3Forms ===== -->
+      <div class="lg:col-span-7">
+        <div
+          class="relative overflow-hidden rounded-[2rem] border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-7 shadow-[var(--shadow-card)] sm:p-10"
+        >
+          <!-- Blob decorativo sutil -->
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute -right-12 -top-12 -z-10 h-44 w-44 rounded-full bg-brand-200/40 blur-3xl dark:bg-brand-700/15"
+          ></span>
+
+          <div class="mb-8 flex flex-col gap-3">
+            <Eyebrow number="01" label="Formulario" tone="brand" />
+            <h2
+              class="font-display text-display-sm text-[color:var(--color-foreground)] leading-tight"
+            >
+              Cuéntanos un poco{' '}
+              <span class="inline-block wavy-underline-peach">de ti</span>.
+            </h2>
+            <p
+              class="text-[color:var(--color-foreground-soft)] leading-relaxed"
+            >
+              Datos mínimos. Te respondemos por WhatsApp o correo.
+            </p>
+          </div>
+
+          <!-- Banners de status (success / error) — controlados por JS -->
+          <div id="status" class="mb-6 flex flex-col gap-3">
+            <div
+              data-form-success
+              class="hidden items-start gap-3 rounded-2xl border border-sage-300 bg-sage-100 p-4 text-sage-700 dark:border-sage-500/40 dark:bg-sage-700/20 dark:text-sage-100"
+              role="status"
+              aria-live="polite"
+            >
+              <CheckCircle2
+                class="h-5 w-5 shrink-0 mt-0.5"
+                aria-hidden="true"
+              />
+              <p class="text-sm leading-relaxed">{c.form.success}</p>
+            </div>
+            <div
+              data-form-error
+              class="hidden items-start gap-3 rounded-2xl border border-peach-300 bg-peach-100 p-4 text-peach-700 dark:border-peach-500/40 dark:bg-peach-700/20 dark:text-peach-100"
+              role="alert"
+              aria-live="assertive"
+            >
+              <AlertCircle
+                class="h-5 w-5 shrink-0 mt-0.5"
+                aria-hidden="true"
+              />
+              <p class="text-sm leading-relaxed">{c.form.error}</p>
+            </div>
+          </div>
+
+          <form
+            action="https://api.web3forms.com/submit"
+            method="POST"
+            class="flex flex-col gap-5"
+            data-contact-form
+            novalidate
+          >
+            <!-- Hidden inputs Web3Forms -->
+            <input
+              type="hidden"
+              name="access_key"
+              value={WEB3FORMS_KEY}
+            />
+            <input
+              type="hidden"
+              name="subject"
+              value="Nuevo contacto desde strebenacademy.com"
+            />
+            <input type="hidden" name="from_name" value="STREBEN web" />
+            <input type="hidden" name="redirect" value={redirectUrl} />
+            <input type="hidden" name="locale" value={locale} />
+            <!-- Honeypot — invisible para humanos, los bots lo llenan -->
+            <input
+              type="checkbox"
+              name="botcheck"
+              tabindex="-1"
+              autocomplete="off"
+              aria-hidden="true"
+              style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"
+            />
+
+            <!-- Nombre -->
+            <div class="flex flex-col gap-2">
+              <label
+                for={ID.name}
+                class="text-sm font-semibold text-[color:var(--color-foreground)]"
+              >
+                {c.form.name}
+                <span aria-hidden="true" class="text-peach-500">*</span>
+              </label>
+              <input
+                id={ID.name}
+                name="name"
+                type="text"
+                required
+                aria-required="true"
+                autocomplete="name"
+                placeholder={c.form.namePlaceholder}
+                class="h-12 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-4 text-[15px] text-[color:var(--color-foreground)] placeholder:text-[color:var(--color-foreground-muted)] transition-[border-color,box-shadow] duration-200 focus:border-brand-400 focus:outline-2 focus:outline-[color:var(--color-ring)] focus:outline-offset-2"
+              />
+            </div>
+
+            <!-- Email + Teléfono en grid -->
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <div class="flex flex-col gap-2">
+                <label
+                  for={ID.email}
+                  class="text-sm font-semibold text-[color:var(--color-foreground)]"
+                >
+                  {c.form.email}
+                  <span aria-hidden="true" class="text-peach-500">*</span>
+                </label>
+                <input
+                  id={ID.email}
+                  name="email"
+                  type="email"
+                  required
+                  aria-required="true"
+                  autocomplete="email"
+                  inputmode="email"
+                  pattern="[^@\s]+@[^@\s]+\.[^@\s]+"
+                  placeholder={c.form.emailPlaceholder}
+                  class="h-12 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-4 text-[15px] text-[color:var(--color-foreground)] placeholder:text-[color:var(--color-foreground-muted)] transition-[border-color,box-shadow] duration-200 focus:border-brand-400 focus:outline-2 focus:outline-[color:var(--color-ring)] focus:outline-offset-2"
+                />
+              </div>
+              <div class="flex flex-col gap-2">
+                <label
+                  for={ID.phone}
+                  class="text-sm font-semibold text-[color:var(--color-foreground)]"
+                >
+                  {c.form.phone}
+                </label>
+                <input
+                  id={ID.phone}
+                  name="phone"
+                  type="tel"
+                  autocomplete="tel"
+                  inputmode="tel"
+                  placeholder={c.form.phonePlaceholder}
+                  class="h-12 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-4 text-[15px] text-[color:var(--color-foreground)] placeholder:text-[color:var(--color-foreground-muted)] transition-[border-color,box-shadow] duration-200 focus:border-brand-400 focus:outline-2 focus:outline-[color:var(--color-ring)] focus:outline-offset-2"
+                />
+              </div>
+            </div>
+
+            <!-- Programa -->
+            <div class="flex flex-col gap-2">
+              <label
+                for={ID.program}
+                class="text-sm font-semibold text-[color:var(--color-foreground)]"
+              >
+                {c.form.program}
+              </label>
+              <select
+                id={ID.program}
+                name="program"
+                class="h-12 appearance-none rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] bg-[length:1.25rem_1.25rem] bg-[right_0.875rem_center] bg-no-repeat px-4 pr-10 text-[15px] text-[color:var(--color-foreground)] transition-[border-color,box-shadow] duration-200 focus:border-brand-400 focus:outline-2 focus:outline-[color:var(--color-ring)] focus:outline-offset-2"
+                style="background-image: url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'><path d='M5.25 7.5 10 12.25 14.75 7.5'/></svg>&quot;);"
+              >
+                <option value="" selected>—</option>
+                {c.form.programOptions.map((opt) => (
+                  <option value={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+
+            <!-- Mensaje -->
+            <div class="flex flex-col gap-2">
+              <label
+                for={ID.message}
+                class="text-sm font-semibold text-[color:var(--color-foreground)]"
+              >
+                {c.form.message}
+                <span aria-hidden="true" class="text-peach-500">*</span>
+              </label>
+              <textarea
+                id={ID.message}
+                name="message"
+                rows="5"
+                required
+                aria-required="true"
+                placeholder={c.form.messagePlaceholder}
+                class="min-h-[140px] rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-4 py-3 text-[15px] leading-relaxed text-[color:var(--color-foreground)] placeholder:text-[color:var(--color-foreground-muted)] transition-[border-color,box-shadow] duration-200 focus:border-brand-400 focus:outline-2 focus:outline-[color:var(--color-ring)] focus:outline-offset-2 resize-y"
+              ></textarea>
+            </div>
+
+            <!-- Submit row -->
+            <div class="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <p
+                class="flex items-start gap-2 text-xs text-[color:var(--color-foreground-muted)] leading-relaxed max-w-md"
+              >
+                <ShieldCheck
+                  class="h-4 w-4 shrink-0 mt-0.5 text-sage-500"
+                  aria-hidden="true"
+                />
+                <span>{c.form.consent}</span>
+              </p>
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                data-submit-btn
+              >
+                <Send class="h-4 w-4" aria-hidden="true" />
+                <span data-submit-text>{c.form.submit}</span>
+              </Button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Bloque "respuestas en horas hábiles" cerca del form -->
+        <div
+          class="mt-6 flex items-start gap-4 rounded-2xl border border-sage-300/50 bg-sage-100/60 p-5 dark:border-sage-500/30 dark:bg-sage-700/20"
+        >
+          <span
+            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sage-200 text-sage-700 dark:bg-sage-700/40 dark:text-sage-100"
+            aria-hidden="true"
+          >
+            <Clock class="h-5 w-5" />
+          </span>
+          <div class="flex flex-col gap-1">
+            <p class="font-semibold text-[color:var(--color-foreground)]">
+              Respuestas en horas hábiles
+            </p>
+            <p
+              class="text-sm text-[color:var(--color-foreground-soft)] leading-relaxed"
+            >
+              Si tu mensaje no requiere espera, escríbenos por WhatsApp y te
+              contestamos en minutos.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Aside: direct contact, social, hours ===== -->
+      <aside class="lg:col-span-5 flex flex-col gap-5">
+        <div class="flex flex-col gap-3">
+          <Eyebrow number="02" label={c.direct.title} tone="peach" />
+          <h2
+            class="font-display text-display-sm text-[color:var(--color-foreground)] leading-tight"
+          >
+            O escríbenos{' '}
+            <span class="inline-block wavy-underline-peach">directo</span>.
+          </h2>
+        </div>
+
+        <!-- 3 cards de contacto directo, una por tono -->
+        <ul class="flex flex-col gap-3" role="list">
+          {directContacts.map((item) => {
+            const Icon = item.icon;
+            const styles = toneStyles[item.tone];
+            return (
+              <li>
+                <a
+                  href={item.href}
+                  target={item.external ? '_blank' : undefined}
+                  rel={item.external ? 'noopener noreferrer' : undefined}
+                  class:list={[
+                    'group flex items-center gap-4 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-5 transition-[transform,border-color,background-color,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)]',
+                    styles.card,
+                  ]}
+                >
+                  <span
+                    class:list={[
+                      'inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl',
+                      styles.iconBg,
+                    ]}
+                    aria-hidden="true"
+                  >
+                    <Icon class="h-5 w-5" />
+                  </span>
+                  <div class="flex flex-col gap-0.5 min-w-0">
+                    <span
+                      class="text-[11px] uppercase tracking-[0.18em] font-semibold text-[color:var(--color-foreground-muted)]"
+                    >
+                      {item.label}
+                    </span>
+                    <span
+                      class="font-display text-lg sm:text-xl text-[color:var(--color-foreground)] truncate"
+                    >
+                      {item.value}
+                    </span>
+                  </div>
+                  <ArrowUpRight
+                    class:list={[
+                      'h-5 w-5 ml-auto shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5',
+                      styles.arrow,
+                    ]}
+                    aria-hidden="true"
+                  />
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+
+        <!-- Redes sociales -->
+        <div
+          class="flex flex-col gap-4 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-6"
+        >
+          <div class="flex items-center gap-3">
+            <span
+              class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand-200/70 text-brand-700 dark:bg-brand-700/40 dark:text-brand-100"
+              aria-hidden="true"
+            >
+              <Globe2 class="h-5 w-5" />
+            </span>
+            <div class="flex flex-col">
+              <span
+                class="text-[11px] uppercase tracking-[0.18em] font-semibold text-[color:var(--color-foreground-muted)]"
+              >
+                {c.direct.socialLabel}
+              </span>
+              <span class="font-semibold text-[color:var(--color-foreground)]">
+                @streben.academy
+              </span>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <a
+              href={SOCIAL.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook de STREBEN ACADEMY"
+              class="inline-flex h-11 items-center gap-2 rounded-full border border-[color:var(--color-border)] px-4 text-sm font-semibold text-[color:var(--color-foreground)] transition-[background-color,border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-brand-300 hover:bg-brand-100/50 dark:hover:bg-brand-900/30"
+            >
+              <Facebook class="h-4 w-4" aria-hidden="true" />
+              <span>Facebook</span>
+            </a>
+            <a
+              href={SOCIAL.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram de STREBEN ACADEMY"
+              class="inline-flex h-11 items-center gap-2 rounded-full border border-[color:var(--color-border)] px-4 text-sm font-semibold text-[color:var(--color-foreground)] transition-[background-color,border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-peach-300 hover:bg-peach-100/50 dark:hover:bg-peach-900/30"
+            >
+              <Instagram class="h-4 w-4" aria-hidden="true" />
+              <span>Instagram</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Horarios — tono butter -->
+        <div
+          class="flex items-start gap-4 rounded-2xl border border-butter-300/60 bg-butter-100/70 p-5 dark:border-butter-500/30 dark:bg-butter-700/20"
+        >
+          <span
+            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-butter-200 text-butter-700 dark:bg-butter-700/40 dark:text-butter-100"
+            aria-hidden="true"
+          >
+            <Clock class="h-5 w-5" />
+          </span>
+          <div class="flex flex-col gap-1">
+            <p
+              class="text-[11px] uppercase tracking-[0.18em] font-semibold text-[color:var(--color-foreground-muted)]"
+            >
+              {c.hours.title}
+            </p>
+            <p
+              class="text-[15px] text-[color:var(--color-foreground)] leading-relaxed"
+            >
+              {c.hours.body}
+            </p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </Container>
+</Section>
+
+{/* ============================================================
+   Script — submit loader + success detection desde ?contact=ok
+   Pequeño (<1 KB). Sin librerías.
+   ============================================================ */}
+<script is:inline>
+  (function () {
+    // 1) Detecta ?contact=ok (post-redirect Web3Forms) y muestra success.
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('contact') === 'ok') {
+        const ok = document.querySelector('[data-form-success]');
+        if (ok) {
+          ok.classList.remove('hidden');
+          ok.classList.add('flex');
+          ok.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    } catch (_) {
+      // no-op
+    }
+
+    // 2) Loader durante submit + manejo de errores nativos.
+    const form = document.querySelector('[data-contact-form]');
+    if (!form) return;
+
+    const btn = form.querySelector('[data-submit-btn]');
+    const btnText = form.querySelector('[data-submit-text]');
+    const errBanner = document.querySelector('[data-form-error]');
+    const okBanner = document.querySelector('[data-form-success]');
+    const originalText = btnText ? btnText.textContent : '';
+    const sendingText = 'Enviando...';
+
+    form.addEventListener('submit', function (e) {
+      // Validación nativa: si falla, no entrar a loader.
+      if (!form.checkValidity()) {
+        e.preventDefault();
+        form.reportValidity();
+        return;
+      }
+      // Honeypot: si está marcado, abortamos silenciosamente.
+      const botcheck = form.querySelector('input[name="botcheck"]');
+      if (botcheck && botcheck.checked) {
+        e.preventDefault();
+        return;
+      }
+      // Ocultar banners previos
+      if (errBanner) {
+        errBanner.classList.add('hidden');
+        errBanner.classList.remove('flex');
+      }
+      if (okBanner) {
+        okBanner.classList.add('hidden');
+        okBanner.classList.remove('flex');
+      }
+      // Activar loader
+      if (btn) {
+        btn.setAttribute('disabled', 'true');
+        btn.setAttribute('aria-busy', 'true');
+      }
+      if (btnText) btnText.textContent = sendingText;
+      // Safety: si por cualquier razón la página no redirecciona en 12s, restauramos.
+      window.setTimeout(function () {
+        if (btn) {
+          btn.removeAttribute('disabled');
+          btn.removeAttribute('aria-busy');
+        }
+        if (btnText) btnText.textContent = originalText;
+      }, 12000);
+    });
+  })();
+</script>

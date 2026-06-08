@@ -1,0 +1,19 @@
+# Apex → www (lo maneja Cloudflare DNS, pero por si acaso)
+https://strebenacademy.com/*  https://www.strebenacademy.com/:splat  301!
+
+# Rutas viejas Jimdo (todas con trailing slash) → nuevas
+/cursos-y-programas/         /cursos                301
+/cursos-y-programas/*        /cursos/:splat         301
+/galeria-y-testimonios/      /testimonios           301
+/galeria-y-testimonios/*     /testimonios           301
+/sobre-nosotros/             /sobre-nosotros        301
+/avisos/                     /alumnos               301
+/configuracion-de-cookies/   /politica-de-privacidad 301
+
+# Trailing slash a no-trailing (consistencia)
+/cursos/                     /cursos                301
+/becas/                      /becas                 301
+/testimonios/                /testimonios           301
+/contacto/                   /contacto              301
+/alumnos/                    /alumnos               301
+/galeria/                    /galeria               301

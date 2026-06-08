@@ -1,0 +1,38 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import BecasPage from '~/components/pages/BecasPage.astro';
+import { faqSchema } from '~/components/seo/schemas';
+import { localePaths } from '~/i18n/config';
+import { useTranslations, type Locale } from '~/i18n';
+
+export const getStaticPaths = () => localePaths();
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = useTranslations(locale);
+const s = t.scholarshipsPage;
+
+// Build FAQ JSON-LD from the 4 scholarships: question = "¿Cómo aplica la <name>?"
+// answer = combination of requirement + howTo.
+const faq = faqSchema({
+  questions: s.items.map((item) => ({
+    q: `¿Cómo aplica la ${item.name}?`,
+    a: `${item.requirement} ${item.howTo}`,
+  })),
+});
+
+const pageTitle = `${s.title} ${s.titleAccent} | ${t.meta.siteName}`;
+const pageDescription = s.subtitle;
+---
+
+<BaseLayout
+  locale={locale}
+  title={pageTitle}
+  description={pageDescription}
+  jsonLd={[faq]}
+>
+  <BecasPage locale={locale} t={t} />
+</BaseLayout>

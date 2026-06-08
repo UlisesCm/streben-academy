@@ -1,0 +1,45 @@
+---
+interface Props {
+  as?: 'div' | 'article' | 'a';
+  href?: string;
+  tone?: 'default' | 'brand' | 'peach' | 'sage' | 'butter';
+  interactive?: boolean;
+  class?: string;
+}
+
+const {
+  as = 'div',
+  href,
+  tone = 'default',
+  interactive = false,
+  class: className = '',
+} = Astro.props;
+
+const Tag = href ? 'a' : as;
+
+const accentBars: Record<NonNullable<Props['tone']>, string> = {
+  default: 'before:bg-brand-300',
+  brand:   'before:bg-brand-400',
+  peach:   'before:bg-peach-300',
+  sage:    'before:bg-sage-300',
+  butter:  'before:bg-butter-300',
+};
+---
+
+<Tag
+  href={href}
+  class:list={[
+    'group relative isolate flex flex-col overflow-hidden',
+    'rounded-2xl border border-[color:var(--color-border)]',
+    'bg-[color:var(--color-surface-elevated)]',
+    'shadow-[var(--shadow-card)]',
+    'transition-[transform,box-shadow,border-color] duration-300 ease-out',
+    // Colored top stripe (the brand "tab")
+    "before:absolute before:inset-x-6 before:top-0 before:h-1 before:rounded-b-full",
+    accentBars[tone],
+    interactive ? 'hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] hover:border-brand-300' : '',
+    className,
+  ]}
+>
+  <slot />
+</Tag>

@@ -1,0 +1,143 @@
+---
+import { Sun, Moon, Monitor } from 'lucide-astro';
+
+interface Props {
+  labels: {
+    menu: string;
+    light: string;
+    dark: string;
+    system: string;
+  };
+}
+
+const { labels } = Astro.props;
+---
+
+<div class="relative" data-theme-root>
+  <button
+    type="button"
+    data-theme-trigger
+    aria-label={labels.menu}
+    aria-haspopup="menu"
+    aria-expanded="false"
+    class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] text-[color:var(--color-foreground-soft)] transition-colors hover:bg-brand-50 hover:text-[color:var(--color-foreground)] focus-visible:outline-2 focus-visible:outline-[color:var(--color-ring)] focus-visible:outline-offset-3 dark:hover:bg-brand-900/30"
+  >
+    <Sun class="h-[18px] w-[18px] hidden [.theme-light_&]:block" aria-hidden="true" />
+    <Moon class="h-[18px] w-[18px] hidden [.theme-dark_&]:block" aria-hidden="true" />
+    <Monitor class="h-[18px] w-[18px] hidden [.theme-system_&]:block" aria-hidden="true" />
+    <Sun class="h-[18px] w-[18px] [.theme-light_&]:hidden [.theme-dark_&]:hidden [.theme-system_&]:hidden" aria-hidden="true" />
+  </button>
+
+  <div
+    data-theme-menu
+    role="menu"
+    aria-label={labels.menu}
+    class="invisible absolute right-0 top-12 z-40 min-w-[180px] origin-top-right scale-95 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-1.5 opacity-0 shadow-[var(--shadow-pop)] transition-[transform,opacity,visibility] duration-200 ease-out data-[open=true]:visible data-[open=true]:scale-100 data-[open=true]:opacity-100"
+  >
+    <button
+      type="button"
+      role="menuitemradio"
+      data-theme-value="light"
+      class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-[color:var(--color-foreground-soft)] transition-colors hover:bg-brand-50 hover:text-[color:var(--color-foreground)] aria-checked:bg-brand-100 aria-checked:text-[color:var(--color-foreground)] dark:hover:bg-brand-900/30 dark:aria-checked:bg-brand-800/40"
+    >
+      <Sun class="h-4 w-4" aria-hidden="true" />
+      <span>{labels.light}</span>
+    </button>
+    <button
+      type="button"
+      role="menuitemradio"
+      data-theme-value="dark"
+      class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-[color:var(--color-foreground-soft)] transition-colors hover:bg-brand-50 hover:text-[color:var(--color-foreground)] aria-checked:bg-brand-100 aria-checked:text-[color:var(--color-foreground)] dark:hover:bg-brand-900/30 dark:aria-checked:bg-brand-800/40"
+    >
+      <Moon class="h-4 w-4" aria-hidden="true" />
+      <span>{labels.dark}</span>
+    </button>
+    <button
+      type="button"
+      role="menuitemradio"
+      data-theme-value="system"
+      class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-[color:var(--color-foreground-soft)] transition-colors hover:bg-brand-50 hover:text-[color:var(--color-foreground)] aria-checked:bg-brand-100 aria-checked:text-[color:var(--color-foreground)] dark:hover:bg-brand-900/30 dark:aria-checked:bg-brand-800/40"
+    >
+      <Monitor class="h-4 w-4" aria-hidden="true" />
+      <span>{labels.system}</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  type ThemePref = 'light' | 'dark' | 'system';
+  const STORAGE_KEY = 'streben-theme';
+
+  function currentPref(): ThemePref {
+    return (localStorage.getItem(STORAGE_KEY) as ThemePref | null) ?? 'system';
+  }
+
+  function applyTheme(pref: ThemePref) {
+    const root = document.documentElement;
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = pref === 'dark' || (pref === 'system' && systemDark);
+    root.classList.toggle('dark', isDark);
+    root.classList.toggle('theme-light', pref === 'light');
+    root.classList.toggle('theme-dark', pref === 'dark');
+    root.classList.toggle('theme-system', pref === 'system');
+    root.dataset.theme = pref;
+  }
+
+  function updateMenuMarks(pref: ThemePref) {
+    document.querySelectorAll<HTMLButtonElement>('[data-theme-value]').forEach((btn) => {
+      btn.setAttribute('aria-checked', btn.dataset.themeValue === pref ? 'true' : 'false');
+    });
+  }
+
+  function initThemeToggle() {
+    const pref = currentPref();
+    applyTheme(pref);
+    updateMenuMarks(pref);
+
+    document.querySelectorAll<HTMLElement>('[data-theme-root]').forEach((root) => {
+      const trigger = root.querySelector<HTMLButtonElement>('[data-theme-trigger]');
+      const menu = root.querySelector<HTMLElement>('[data-theme-menu]');
+      if (!trigger || !menu) return;
+
+      const close = () => {
+        menu.dataset.open = 'false';
+        trigger.setAttribute('aria-expanded', 'false');
+      };
+      const open = () => {
+        menu.dataset.open = 'true';
+        trigger.setAttribute('aria-expanded', 'true');
+      };
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (menu.dataset.open === 'true') close();
+        else open();
+      });
+
+      menu.querySelectorAll<HTMLButtonElement>('[data-theme-value]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const value = btn.dataset.themeValue as ThemePref;
+          localStorage.setItem(STORAGE_KEY, value);
+          applyTheme(value);
+          updateMenuMarks(value);
+          close();
+        });
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!root.contains(e.target as Node)) close();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') close();
+      });
+    });
+
+    // Respond to OS theme changes when in "system" mode
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (currentPref() === 'system') applyTheme('system');
+    });
+  }
+
+  initThemeToggle();
+  document.addEventListener('astro:after-swap', initThemeToggle);
+</script>

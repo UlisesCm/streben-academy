@@ -1,0 +1,80 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import CursoDetallePage from '~/components/pages/CursoDetallePage.astro';
+import { locales, defaultLocale, type Locale } from '~/i18n/config';
+import { useTranslations } from '~/i18n';
+import { getCoursesByLocale, groupByProgram, type Course } from '~/lib/courses';
+import { courseSchema } from '~/components/seo/schemas';
+import { SITE } from '~/lib/site';
+import { loc } from '~/lib/url';
+
+export async function getStaticPaths() {
+  const paths: Array<{
+    params: { lang: string | undefined; slug: string };
+    props: { locale: Locale; course: Course; prev?: Course; next?: Course };
+  }> = [];
+
+  for (const locale of locales) {
+    const courses = await getCoursesByLocale(locale);
+    const grouped = groupByProgram(courses);
+
+    for (const course of courses) {
+      const siblings = grouped.get(course.data.program) ?? [];
+      const idx = siblings.findIndex((c) => c.id === course.id);
+      const prev = idx > 0 ? siblings[idx - 1] : undefined;
+      const next = idx >= 0 && idx < siblings.length - 1 ? siblings[idx + 1] : undefined;
+
+      paths.push({
+        params: {
+          lang: locale === defaultLocale ? undefined : locale,
+          slug: course.id,
+        },
+        props: { locale, course, prev, next },
+      });
+    }
+  }
+
+  return paths;
+}
+
+interface Props {
+  locale: Locale;
+  course: Course;
+  prev?: Course;
+  next?: Course;
+}
+
+const { locale, course, prev, next } = Astro.props as Props;
+const t = useTranslations(locale);
+
+const localeMap: Record<Locale, string> = {
+  es: 'es-MX',
+  en: 'en-GB',
+  fr: 'fr-FR',
+  pt: 'pt-BR',
+};
+
+const canonicalPath = loc(locale, `cursos/${course.id}`);
+const canonicalUrl = `${SITE.url}${canonicalPath}`;
+
+const schema = courseSchema({
+  title: course.data.title,
+  description: course.data.summary,
+  url: canonicalUrl,
+  program: course.data.program,
+  level: course.data.level,
+  cefr: course.data.cefr,
+  ages: course.data.ages,
+  duration: course.data.duration,
+  locale: localeMap[locale],
+});
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${course.data.title} | ${t.meta.siteName}`}
+  description={course.data.summary}
+  jsonLd={[schema]}
+>
+  <CursoDetallePage locale={locale} t={t} course={course} prev={prev} next={next} />
+</BaseLayout>

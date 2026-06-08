@@ -1,0 +1,67 @@
+---
+import Section from '~/components/ui/Section.astro';
+import Container from '~/components/ui/Container.astro';
+import SectionHeading from '~/components/ui/SectionHeading.astro';
+import TestimonialCard from './TestimonialCard.astro';
+import Button from '~/components/ui/Button.astro';
+import { ArrowUpRight } from 'lucide-astro';
+import type { Locale } from '~/i18n/config';
+import type { Dictionary } from '~/i18n/strings/es';
+import { loc } from '~/lib/url';
+import { getFeaturedTestimonios } from '~/lib/testimonios';
+
+interface Props {
+  locale: Locale;
+  t: Dictionary;
+}
+
+const { locale, t } = Astro.props;
+const list = await getFeaturedTestimonios(locale, 3);
+const programNames: Record<string, string> = {
+  kiddos: t.home.programs.kiddos.name,
+  teens: t.home.programs.teens.name,
+  adults: t.home.programs.adults.name,
+  tutoring: t.home.programs.tutoring.name,
+};
+const tones = ['brand', 'peach', 'sage'] as const;
+---
+
+<Section spacing="lg" tone="default">
+  <Container size="xl">
+    <div class="flex flex-col gap-10 mb-12 lg:flex-row lg:items-end lg:justify-between">
+      <SectionHeading
+        eyebrowNumber="05"
+        eyebrow={t.home.testimonials.eyebrow.split('—')[1]?.trim() ?? t.home.testimonials.eyebrow}
+        title={t.home.testimonials.title}
+        titleAccent={t.home.testimonials.titleAccent}
+        accentTone="brand"
+      />
+      <Button href={loc(locale, 'testimonios')} variant="secondary" size="md">
+        <span>{t.cta.seeAll}</span>
+        <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+      </Button>
+    </div>
+
+    {list.length > 0 ? (
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {list.map((entry, idx) => (
+          <TestimonialCard
+            name={entry.data.name}
+            quote={entry.data.quote}
+            program={programNames[entry.data.program]}
+            level={entry.data.level}
+            rating={entry.data.rating}
+            tone={tones[idx % tones.length]}
+            size={idx === 0 ? 'lg' : 'md'}
+          />
+        ))}
+      </div>
+    ) : (
+      <div class="rounded-3xl border border-dashed border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-10 text-center">
+        <p class="text-[color:var(--color-foreground-soft)]">
+          {t.home.testimonials.empty}
+        </p>
+      </div>
+    )}
+  </Container>
+</Section>

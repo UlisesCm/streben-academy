@@ -1,0 +1,74 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import ContactoPage from '~/components/pages/ContactoPage.astro';
+import { localePaths } from '~/i18n/config';
+import { useTranslations, type Locale } from '~/i18n';
+import { SITE, CONTACT, SOCIAL } from '~/lib/site';
+
+export const getStaticPaths = () => localePaths();
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = useTranslations(locale);
+const c = t.contactPage;
+
+const pageUrl = `${SITE.url}${locale === 'es' ? '/contacto' : `/${locale}/contacto`}`;
+
+// EducationalOrganization con contactPoint completo (WhatsApp + email).
+const orgContactSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOrganization',
+  '@id': `${SITE.url}/#organization-contact`,
+  name: SITE.name,
+  url: SITE.url,
+  email: CONTACT.email,
+  telephone: `+52${CONTACT.phone}`,
+  address: {
+    '@type': 'PostalAddress',
+    addressCountry: 'MX',
+  },
+  contactPoint: [
+    {
+      '@type': 'ContactPoint',
+      contactType: 'customer support',
+      telephone: `+52${CONTACT.phone}`,
+      email: CONTACT.email,
+      availableLanguage: ['Spanish', 'English'],
+      areaServed: 'MX',
+      contactOption: 'TollFree',
+    },
+    {
+      '@type': 'ContactPoint',
+      contactType: 'sales',
+      telephone: `+52${CONTACT.phone}`,
+      availableLanguage: ['Spanish'],
+      areaServed: 'MX',
+    },
+  ],
+  sameAs: [SOCIAL.facebook, SOCIAL.instagram],
+};
+
+const webPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  '@id': `${pageUrl}#webpage`,
+  url: pageUrl,
+  name: `${c.title} ${c.titleAccent}`,
+  description: c.subtitle,
+  isPartOf: { '@id': `${SITE.url}/#website` },
+  about: { '@id': `${SITE.url}/#organization` },
+  inLanguage: locale,
+};
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${c.title} ${c.titleAccent} | STREBEN ACADEMY`}
+  description={c.subtitle}
+  jsonLd={[orgContactSchema, webPageSchema]}
+>
+  <ContactoPage locale={locale} t={t} />
+</BaseLayout>

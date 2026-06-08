@@ -1,0 +1,74 @@
+---
+import { Quote, Star } from 'lucide-astro';
+import Chip from '~/components/ui/Chip.astro';
+
+interface Props {
+  name: string;
+  quote: string;
+  program?: string;
+  level?: string;
+  rating?: number;
+  size?: 'md' | 'lg';
+  tone?: 'default' | 'brand' | 'peach' | 'sage' | 'butter';
+}
+
+const {
+  name,
+  quote,
+  program,
+  level,
+  rating = 5,
+  size = 'md',
+  tone = 'default',
+} = Astro.props;
+
+const toneStyles: Record<NonNullable<Props['tone']>, string> = {
+  default: 'bg-[color:var(--color-surface-elevated)]',
+  brand: 'bg-brand-100 dark:bg-brand-800/30',
+  peach: 'bg-peach-100 dark:bg-peach-700/20',
+  sage: 'bg-sage-100 dark:bg-sage-700/20',
+  butter: 'bg-butter-100 dark:bg-butter-700/20',
+};
+
+const initial = name.charAt(0).toUpperCase();
+---
+
+<article
+  class:list={[
+    'group relative flex flex-col gap-6 rounded-3xl border border-[color:var(--color-border)] p-7 shadow-[var(--shadow-card)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)]',
+    toneStyles[tone],
+    size === 'lg' ? 'p-8 sm:p-10' : '',
+  ]}
+>
+  <Quote
+    aria-hidden="true"
+    class:list={[
+      'absolute right-6 top-6 text-brand-300 dark:text-brand-700 opacity-70',
+      size === 'lg' ? 'h-16 w-16' : 'h-10 w-10',
+    ]}
+  />
+
+  <div class="flex items-center gap-1.5" aria-label={`${rating} estrellas`}>
+    {Array.from({ length: rating }).map(() => (
+      <Star class="h-4 w-4 fill-butter-500 text-butter-500" aria-hidden="true" />
+    ))}
+  </div>
+
+  <blockquote class:list={['font-display text-[color:var(--color-foreground)] leading-snug', size === 'lg' ? 'text-2xl sm:text-3xl' : 'text-xl']}>
+    "{quote}"
+  </blockquote>
+
+  <footer class="mt-auto flex items-center gap-4 border-t border-[color:var(--color-border)] pt-5">
+    <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-500 font-display text-lg text-[color:var(--color-paper)]">
+      {initial}
+    </span>
+    <div class="flex flex-col">
+      <span class="font-semibold text-[color:var(--color-foreground)]">{name}</span>
+      {(program || level) && (
+        <span class="text-xs text-[color:var(--color-foreground-muted)]">
+          {[program, level].filter(Boolean).join(' · ')}
+        </span>
+      )}
+    </div>
+  </footer>
+</article>

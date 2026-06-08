@@ -1,0 +1,10 @@
+/* TEAM */
+Founder: Arantza Molina
+Contact: streben.academy@gmail.com
+Location: México
+
+/* SITE */
+Last update: 2026-06-08
+Language: Spanish (es-MX), English (en), French (fr), Portuguese (pt)
+Built with: Astro 5, Tailwind CSS v4
+Standards: HTML5, CSS3

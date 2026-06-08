@@ -1,0 +1,71 @@
+---
+import { ArrowUpRight } from 'lucide-astro';
+import Chip from '~/components/ui/Chip.astro';
+
+interface Props {
+  name: string;
+  ages: string;
+  description: string;
+  levels: string;
+  href: string;
+  tone: 'brand' | 'peach' | 'sage' | 'butter';
+  ctaLabel: string;
+  large?: boolean;
+}
+
+const { name, ages, description, levels, href, tone, ctaLabel, large = false } = Astro.props;
+
+const toneAccent: Record<Props['tone'], string> = {
+  brand: 'bg-brand-400 group-hover:bg-brand-500',
+  peach: 'bg-peach-300 group-hover:bg-peach-500',
+  sage: 'bg-sage-300 group-hover:bg-sage-500',
+  butter: 'bg-butter-300 group-hover:bg-butter-500',
+};
+
+const numberTone: Record<Props['tone'], string> = {
+  brand: 'text-brand-300 dark:text-brand-700',
+  peach: 'text-peach-300 dark:text-peach-700',
+  sage: 'text-sage-300 dark:text-sage-700',
+  butter: 'text-butter-300 dark:text-butter-700',
+};
+---
+
+<a
+  href={href}
+  class:list={[
+    'group relative isolate flex flex-col gap-5 overflow-hidden rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-6 sm:p-7 shadow-[var(--shadow-card)] transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] hover:border-brand-300',
+    large ? 'lg:p-9 lg:gap-6' : '',
+  ]}
+>
+  <!-- Colored top stripe -->
+  <span aria-hidden="true" class:list={['absolute inset-x-6 top-0 h-1.5 rounded-b-full transition-colors', toneAccent[tone]]}></span>
+
+  <!-- Decorative big number -->
+  <span aria-hidden="true" class:list={['absolute -right-2 -bottom-6 font-display text-[8rem] leading-none opacity-25 transition-opacity group-hover:opacity-40', numberTone[tone]]}>
+    {name.charAt(0)}
+  </span>
+
+  <div class="flex items-center justify-between gap-3">
+    <Chip tone={tone} size="sm">{ages}</Chip>
+    <span class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[color:var(--color-border)] text-[color:var(--color-foreground-soft)] transition-[transform,background-color] group-hover:bg-brand-50 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 dark:group-hover:bg-brand-900/30">
+      <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+    </span>
+  </div>
+
+  <h3 class:list={['font-display text-3xl text-[color:var(--color-foreground)]', large ? 'lg:text-4xl' : '']}>
+    {name}
+  </h3>
+
+  <p class="text-[color:var(--color-foreground-soft)] leading-relaxed text-[15px] flex-1">
+    {description}
+  </p>
+
+  <div class="mt-1 flex items-center justify-between gap-3 border-t border-[color:var(--color-border)] pt-4">
+    <span class="text-xs uppercase tracking-[0.16em] text-[color:var(--color-foreground-muted)]">
+      {levels}
+    </span>
+    <span class="text-sm font-semibold text-[color:var(--color-foreground)] group-hover:text-brand-600">
+      {ctaLabel}
+    </span>
+  </div>
+</a>

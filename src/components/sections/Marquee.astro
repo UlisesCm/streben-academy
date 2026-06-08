@@ -1,0 +1,33 @@
+---
+interface Props {
+  words: readonly string[];
+  tone?: 'ink' | 'brand' | 'paper';
+}
+
+const { words, tone = 'ink' } = Astro.props;
+
+const tones: Record<NonNullable<Props['tone']>, string> = {
+  ink: 'bg-[color:var(--color-ink)] text-[color:var(--color-paper)]',
+  brand: 'bg-brand-500 text-[color:var(--color-paper)]',
+  paper: 'bg-[color:var(--color-surface-2)] text-[color:var(--color-foreground)] border-y border-[color:var(--color-border)]',
+};
+
+// Duplicate words for seamless loop
+const doubled = [...words, ...words, ...words, ...words];
+---
+
+<div class:list={['relative isolate overflow-hidden py-6 sm:py-8', tones[tone]]}>
+  <div class="marquee-mask flex w-full">
+    <div
+      class="flex shrink-0 items-center gap-12 pr-12 font-display text-3xl sm:text-4xl"
+      style="animation: var(--animate-marquee);"
+    >
+      {doubled.map((word, i) => (
+        <span class="flex items-center gap-12 whitespace-nowrap">
+          <span class={i % 3 === 1 ? 'opacity-50' : ''}>{word}</span>
+          <span aria-hidden="true" class="inline-block h-2 w-2 shrink-0 rounded-full bg-peach-300"></span>
+        </span>
+      ))}
+    </div>
+  </div>
+</div>

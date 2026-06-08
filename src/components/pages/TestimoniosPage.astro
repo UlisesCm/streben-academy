@@ -1,0 +1,467 @@
+---
+/**
+ * TestimoniosPage — Página de testimonios para STREBEN ACADEMY.
+ * Estructura: hero corto + featured grande + filtro por programa + grid + CTA.
+ * Diseño editorial, asimétrico, pastel rotativo.
+ */
+import Section from '~/components/ui/Section.astro';
+import Container from '~/components/ui/Container.astro';
+import SectionHeading from '~/components/ui/SectionHeading.astro';
+import Button from '~/components/ui/Button.astro';
+import Chip from '~/components/ui/Chip.astro';
+import Eyebrow from '~/components/ui/Eyebrow.astro';
+import TestimonialCard from '~/components/sections/TestimonialCard.astro';
+import {
+  ArrowUpRight,
+  MessageCircle,
+  Quote,
+  Star,
+  Sparkles,
+  Heart,
+  Megaphone,
+} from 'lucide-astro';
+import type { Locale } from '~/i18n/config';
+import type { Dictionary } from '~/i18n/strings/es';
+import type { CollectionEntry } from 'astro:content';
+import { whatsappLink } from '~/lib/site';
+import { loc } from '~/lib/url';
+
+interface Props {
+  locale: Locale;
+  t: Dictionary;
+  testimonios: CollectionEntry<'testimonios'>[];
+}
+
+const { locale, t, testimonios } = Astro.props;
+const p = t.testimonialsPage;
+
+// Mapa programa → nombre legible (usa el dict ya traducido).
+const programNames: Record<string, string> = {
+  kiddos: t.home.programs.kiddos.name,
+  teens: t.home.programs.teens.name,
+  adults: t.home.programs.adults.name,
+  tutoring: t.home.programs.tutoring.name,
+};
+
+// Filtros: "all" + cada programa con label localizada.
+const filters = [
+  { key: 'all', label: t.cta.seeAll },
+  { key: 'kiddos', label: t.home.programs.kiddos.name },
+  { key: 'teens', label: t.home.programs.teens.name },
+  { key: 'adults', label: t.home.programs.adults.name },
+  { key: 'tutoring', label: t.home.programs.tutoring.name },
+] as const;
+
+// Pick featured: el primero con featured=true, o el primero del array.
+const featured =
+  testimonios.find((entry) => entry.data.featured) ?? testimonios[0];
+const rest = featured
+  ? testimonios.filter((entry) => entry.id !== featured.id)
+  : [];
+
+// Tonos rotativos para el grid restante.
+const restTones = ['peach', 'sage', 'butter', 'brand'] as const;
+
+// Featured tone (siempre brand para resaltar).
+const featuredTone = 'brand' as const;
+
+// CTAs
+const waInformes = whatsappLink(t.whatsapp.prefilled);
+const waCompartir = whatsappLink(
+  'Hola STREBEN, me gustaría compartir mi testimonio.',
+);
+const contactoHref = loc(locale, 'contacto');
+
+// Si hay pocos (0 o 1), mostramos el placeholder grande.
+const showPlaceholder = testimonios.length === 0;
+
+// Iniciales del featured (para card grande)
+const featuredInitial = featured?.data.name.charAt(0).toUpperCase() ?? '';
+---
+
+<!-- ============================================================
+     HERO — corto, asimétrico, sin paper-grid (para variar)
+     ============================================================ -->
+<section
+  class="relative isolate overflow-hidden pt-16 sm:pt-24 lg:pt-28 pb-16 sm:pb-20"
+>
+  <!-- Decorative blobs pastel -->
+  <span
+    aria-hidden="true"
+    class="pointer-events-none absolute -left-40 top-8 -z-10 h-80 w-80 rounded-full bg-brand-200/55 blur-3xl dark:bg-brand-700/20"
+  ></span>
+  <span
+    aria-hidden="true"
+    class="pointer-events-none absolute right-[-10%] top-32 -z-10 h-72 w-72 rounded-full bg-peach-200/45 blur-3xl dark:bg-peach-700/15"
+  ></span>
+  <span
+    aria-hidden="true"
+    class="pointer-events-none absolute left-1/3 bottom-[-4rem] -z-10 h-64 w-64 rounded-full bg-sage-200/40 blur-3xl dark:bg-sage-700/15"
+  ></span>
+
+  <Container size="xl">
+    <div class="grid grid-cols-1 items-end gap-10 lg:grid-cols-12 lg:gap-14">
+      <div class="lg:col-span-8 flex flex-col gap-7">
+        <Chip tone="brand" size="md" class="self-start">
+          <Sparkles class="h-3.5 w-3.5" aria-hidden="true" />
+          {p.eyebrow}
+        </Chip>
+
+        <h1
+          class="font-display text-display-xl text-[color:var(--color-foreground)] leading-[1]"
+        >
+          {p.title}{' '}
+          <span class="relative inline-block">
+            <span class="relative z-10 wavy-underline">{p.titleAccent}</span>
+          </span>
+          .
+        </h1>
+
+        <p
+          class="max-w-2xl text-lg sm:text-xl text-[color:var(--color-foreground-soft)] leading-relaxed"
+        >
+          {p.subtitle}
+        </p>
+      </div>
+
+      <!-- Mini ficha lateral: count + estrella -->
+      {testimonios.length > 0 && (
+        <aside class="lg:col-span-4 flex justify-start lg:justify-end">
+          <div
+            class="relative w-full max-w-sm rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-6 shadow-[var(--shadow-card)] sm:p-7"
+            style="animation: float 8s ease-in-out infinite;"
+          >
+            <div class="flex items-center gap-1.5 mb-3" aria-hidden="true">
+              {Array.from({ length: 5 }).map(() => (
+                <Star class="h-4 w-4 fill-butter-500 text-butter-500" />
+              ))}
+            </div>
+            <p
+              class="font-display text-6xl sm:text-7xl leading-[0.95] text-[color:var(--color-foreground)]"
+            >
+              {testimonios.length}
+            </p>
+            <p
+              class="mt-2 font-display text-xl text-[color:var(--color-foreground-soft)]"
+            >
+              {testimonios.length === 1 ? 'historia' : 'historias'} para
+              inspirarte.
+            </p>
+          </div>
+        </aside>
+      )}
+    </div>
+  </Container>
+</section>
+
+{showPlaceholder ? (
+  <!-- ============================================================
+       PLACEHOLDER — cuando no hay testimonios cargados todavía
+       ============================================================ -->
+  <Section tone="brand" spacing="lg" decorative>
+    <Container size="lg">
+      <div class="flex flex-col items-center gap-10">
+        <Eyebrow label={p.eyebrow} tone="brand" class="mx-auto" />
+
+        <div
+          class="w-full max-w-2xl rounded-3xl border-2 border-dashed border-brand-300/70 bg-gradient-to-b from-brand-100/60 to-peach-100/40 dark:border-brand-600/40 dark:from-brand-900/30 dark:to-peach-900/20 p-12 sm:p-16 flex flex-col items-center gap-8 text-center"
+        >
+          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-brand-200/60 dark:bg-brand-700/30">
+            <Quote
+              class="h-12 w-12 text-brand-500 dark:text-brand-300"
+              aria-hidden="true"
+            />
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <p class="font-display text-display-sm text-[color:var(--color-foreground)]">
+              {p.placeholderTitle}
+            </p>
+            <p class="text-base sm:text-lg text-[color:var(--color-foreground-soft)] leading-relaxed max-w-md">
+              {p.placeholderBody}
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-center gap-3">
+            <Button href={waInformes} variant="whatsapp" size="lg">
+              <MessageCircle class="h-5 w-5" aria-hidden="true" />
+              <span>{p.cta}</span>
+            </Button>
+            <Button href={contactoHref} variant="ink" size="lg">
+              <span>{t.nav.contact}</span>
+              <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </Section>
+) : (
+  <>
+    <!-- ============================================================
+         FEATURED — testimonio destacado a tamaño grande
+         ============================================================ -->
+    <Section spacing="lg" tone="default">
+      <Container size="xl">
+        <div class="mb-12 flex flex-col gap-5 max-w-3xl">
+          <Eyebrow number="01" label="Voz destacada" tone="brand" />
+          <h2
+            class="font-display text-display-md leading-[1.05] text-[color:var(--color-foreground)]"
+          >
+            Una historia que{' '}
+            <span class="inline-block wavy-underline-peach">resume</span>{' '}
+            todo.
+          </h2>
+        </div>
+
+        <article
+          class="relative grid grid-cols-1 gap-0 overflow-hidden rounded-[2rem] border border-[color:var(--color-border)] bg-brand-100 shadow-[var(--shadow-card)] dark:bg-brand-800/30 lg:grid-cols-12"
+        >
+          <!-- Left: avatar + meta -->
+          <div
+            class="relative flex flex-col items-center justify-center gap-6 bg-gradient-to-br from-brand-200/80 to-brand-300/40 p-10 text-center dark:from-brand-700/40 dark:to-brand-800/20 lg:col-span-4 lg:p-12"
+          >
+            <span
+              aria-hidden="true"
+              class="pointer-events-none absolute -right-6 -top-6 font-display text-[12rem] leading-none text-brand-300/40 select-none dark:text-brand-600/30"
+            >
+              "
+            </span>
+            <span
+              class="relative z-10 inline-flex h-28 w-28 items-center justify-center rounded-full bg-brand-500 font-display text-5xl text-[color:var(--color-paper)] shadow-[var(--shadow-pop)] sm:h-32 sm:w-32 sm:text-6xl"
+            >
+              {featuredInitial}
+            </span>
+            <div class="relative z-10 flex flex-col gap-2">
+              <p class="font-display text-2xl text-[color:var(--color-foreground)]">
+                {featured!.data.name}
+              </p>
+              <p class="text-sm text-[color:var(--color-foreground-muted)]">
+                {[
+                  programNames[featured!.data.program],
+                  featured!.data.level,
+                  featured!.data.age ? `${featured!.data.age} años` : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </p>
+              <div
+                class="mt-2 flex items-center justify-center gap-1.5"
+                aria-label={`${featured!.data.rating} estrellas`}
+              >
+                {Array.from({ length: featured!.data.rating }).map(() => (
+                  <Star
+                    class="h-5 w-5 fill-butter-500 text-butter-500"
+                    aria-hidden="true"
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: quote enorme -->
+          <div
+            class="relative flex flex-col justify-center gap-6 p-10 sm:p-12 lg:col-span-8 lg:p-16"
+          >
+            <Quote
+              aria-hidden="true"
+              class="h-12 w-12 text-brand-400 dark:text-brand-500"
+            />
+            <blockquote
+              class="font-display text-2xl leading-snug text-[color:var(--color-foreground)] sm:text-3xl lg:text-4xl"
+            >
+              "{featured!.data.quote}"
+            </blockquote>
+            <footer class="mt-2 flex items-center gap-3 text-xs uppercase tracking-[0.18em] text-[color:var(--color-foreground-muted)]">
+              <Heart
+                class="h-4 w-4 text-peach-500"
+                aria-hidden="true"
+              />
+              <span>Testimonio verificado</span>
+            </footer>
+          </div>
+        </article>
+      </Container>
+    </Section>
+
+    <!-- ============================================================
+         GRID + FILTROS por programa
+         ============================================================ -->
+    <Section spacing="lg" tone="alt" id="historias">
+      <Container size="xl">
+        <div class="mb-10 flex flex-col gap-10 lg:mb-14 lg:flex-row lg:items-end lg:justify-between">
+          <div class="flex flex-col gap-5 max-w-2xl">
+            <Eyebrow number="02" label="Más voces" tone="peach" />
+            <h2
+              class="font-display text-display-md leading-[1.05] text-[color:var(--color-foreground)]"
+            >
+              Filtra por{' '}
+              <span class="inline-block wavy-underline-sage">programa</span>{' '}
+              y descubre más.
+            </h2>
+          </div>
+        </div>
+
+        <!-- Chips filtro -->
+        {rest.length > 0 && (
+          <div
+            class="mb-10 flex flex-wrap items-center gap-2 sm:gap-2.5"
+            role="tablist"
+            aria-label="Filtrar testimonios por programa"
+            data-filter-bar
+          >
+            {filters.map((f, idx) => (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={idx === 0 ? 'true' : 'false'}
+                data-filter={f.key}
+                class:list={[
+                  'inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-[13px] font-medium transition-[background-color,border-color,color,transform] duration-200 ease-out',
+                  'border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] text-[color:var(--color-foreground-soft)]',
+                  'hover:border-brand-300 hover:text-[color:var(--color-foreground)]',
+                  'aria-selected:bg-[color:var(--color-ink)] aria-selected:text-[color:var(--color-paper)] aria-selected:border-[color:var(--color-ink)]',
+                  'focus-visible:outline-2 focus-visible:outline-[color:var(--color-ring)] focus-visible:outline-offset-3',
+                ]}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <!-- Grid del resto de testimonios -->
+        {rest.length > 0 ? (
+          <div
+            class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+            data-testimonial-grid
+          >
+            {rest.map((entry, idx) => (
+              <div data-program={entry.data.program} class="contents">
+                <TestimonialCard
+                  name={entry.data.name}
+                  quote={entry.data.quote}
+                  program={programNames[entry.data.program]}
+                  level={entry.data.level}
+                  rating={entry.data.rating}
+                  tone={restTones[idx % restTones.length]}
+                  size="md"
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <!-- Caso: solo hay 1 testimonio (el featured ya se mostró). -->
+          <div
+            class="rounded-3xl border-2 border-dashed border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-10 text-center"
+          >
+            <p class="text-[color:var(--color-foreground-soft)]">
+              {t.home.testimonials.empty}
+            </p>
+          </div>
+        )}
+
+        <!-- Mensaje cuando filtro no encuentra nada -->
+        {rest.length > 0 && (
+          <p
+            class="mt-10 hidden text-center text-[color:var(--color-foreground-muted)]"
+            data-filter-empty
+            role="status"
+            aria-live="polite"
+          >
+            Pronto sumamos más testimonios de este programa.
+          </p>
+        )}
+      </Container>
+    </Section>
+  </>
+)}
+
+<!-- ============================================================
+     COMPARTE TU HISTORIA — CTA cálido
+     ============================================================ -->
+<Section spacing="lg" tone="butter" decorative id="comparte">
+  <Container size="lg">
+    <div
+      class="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14"
+    >
+      <div class="lg:col-span-7 flex flex-col gap-5">
+        <Eyebrow number="03" label="Comparte tu historia" tone="butter" />
+        <h2
+          class="font-display text-display-lg leading-[1.05] text-[color:var(--color-foreground)]"
+        >
+          ¿Estudias con nosotros?{' '}
+          <span class="wavy-underline-peach">Cuéntanos cómo te va</span>.
+        </h2>
+        <p
+          class="max-w-xl text-lg text-[color:var(--color-foreground-soft)] leading-relaxed"
+        >
+          Tu testimonio ayuda a quien duda dar el primer paso. Mándanos un
+          mensaje breve por WhatsApp y, si quieres, lo publicamos con tu
+          nombre o iniciales.
+        </p>
+      </div>
+
+      <div class="lg:col-span-5 flex flex-col gap-3 lg:items-end">
+        <Button href={waCompartir} variant="whatsapp" size="lg" fullWidth>
+          <MessageCircle class="h-5 w-5" aria-hidden="true" />
+          <span>Compartir mi testimonio</span>
+        </Button>
+        <Button href={waInformes} variant="ink" size="lg" fullWidth>
+          <Megaphone class="h-5 w-5" aria-hidden="true" />
+          <span>Pedir informes</span>
+          <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </Button>
+        <p class="mt-1 text-xs text-[color:var(--color-foreground-muted)] lg:text-right">
+          Respondemos en horas hábiles. Sin spam, palabra.
+        </p>
+      </div>
+    </div>
+  </Container>
+</Section>
+
+{/*
+  Script vanilla — filtra cards por data-program.
+  Ligero (<1 KB), no se carga si rest.length === 0.
+*/}
+{rest.length > 0 && (
+  <script is:inline>
+    (function () {
+      const bar = document.querySelector('[data-filter-bar]');
+      const grid = document.querySelector('[data-testimonial-grid]');
+      const empty = document.querySelector('[data-filter-empty]');
+      if (!bar || !grid) return;
+
+      const buttons = bar.querySelectorAll('button[data-filter]');
+      const items = grid.querySelectorAll('[data-program]');
+
+      function applyFilter(key) {
+        let shown = 0;
+        items.forEach(function (item) {
+          const match = key === 'all' || item.dataset.program === key;
+          // Mantener display:contents para no romper el grid; ocultamos vía hidden.
+          if (match) {
+            item.removeAttribute('hidden');
+            shown += 1;
+          } else {
+            item.setAttribute('hidden', '');
+          }
+        });
+        if (empty) {
+          if (shown === 0) empty.classList.remove('hidden');
+          else empty.classList.add('hidden');
+        }
+      }
+
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          buttons.forEach(function (b) {
+            b.setAttribute('aria-selected', 'false');
+          });
+          btn.setAttribute('aria-selected', 'true');
+          applyFilter(btn.getAttribute('data-filter') || 'all');
+        });
+      });
+    })();
+  </script>
+)}

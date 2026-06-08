@@ -1,0 +1,28 @@
+---
+interface Props {
+  number?: string;
+  label: string;
+  tone?: 'brand' | 'peach' | 'sage' | 'butter' | 'ink';
+  class?: string;
+}
+
+const { number, label, tone = 'brand', class: className = '' } = Astro.props;
+
+const numberColor: Record<NonNullable<Props['tone']>, string> = {
+  brand: 'text-brand-500',
+  peach: 'text-peach-500',
+  sage: 'text-sage-500',
+  butter: 'text-butter-500',
+  ink: 'text-[color:var(--color-foreground-muted)]',
+};
+---
+
+<div class:list={['flex items-center gap-3 text-eyebrow uppercase font-semibold', className]}>
+  {number && (
+    <span class:list={['font-display font-normal text-base sm:text-lg', numberColor[tone]]}>
+      {number}
+    </span>
+  )}
+  <span aria-hidden="true" class="block h-px w-8 bg-[color:var(--color-border)]"></span>
+  <span class="tracking-[0.16em] text-[color:var(--color-foreground-muted)]">{label}</span>
+</div>

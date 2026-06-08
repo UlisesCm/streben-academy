@@ -1,0 +1,164 @@
+---
+import Container from '~/components/ui/Container.astro';
+import Button from '~/components/ui/Button.astro';
+import Chip from '~/components/ui/Chip.astro';
+import { ArrowUpRight, MessageCircle, Sparkles, Globe2, GraduationCap } from 'lucide-astro';
+import type { Locale } from '~/i18n/config';
+import type { Dictionary } from '~/i18n/strings/es';
+import { loc } from '~/lib/url';
+import { whatsappLink } from '~/lib/site';
+
+interface Props {
+  locale: Locale;
+  t: Dictionary;
+}
+
+const { locale, t } = Astro.props;
+const h = t.home.hero;
+const waLink = whatsappLink(t.whatsapp.prefilled);
+const coursesLink = loc(locale, 'cursos');
+---
+
+<section class="relative isolate overflow-hidden bg-paper-grid pt-12 sm:pt-20 lg:pt-28 pb-24 sm:pb-32">
+  <!-- Decorative blobs -->
+  <span aria-hidden="true" class="pointer-events-none absolute -left-32 top-12 -z-10 h-72 w-72 rounded-full bg-peach-200/50 blur-3xl dark:bg-peach-700/15"></span>
+  <span aria-hidden="true" class="pointer-events-none absolute -right-32 top-40 -z-10 h-96 w-96 rounded-full bg-brand-200/60 blur-3xl dark:bg-brand-700/25"></span>
+  <span aria-hidden="true" class="pointer-events-none absolute left-1/2 -bottom-24 -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-sage-200/40 blur-3xl dark:bg-sage-700/10"></span>
+
+  <Container size="xl">
+    <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-12">
+      <!-- Left: Copy -->
+      <div class="lg:col-span-7 flex flex-col gap-8">
+        <Chip tone="brand" size="md" class="self-start">
+          <Sparkles class="h-3.5 w-3.5" aria-hidden="true" />
+          {h.eyebrow}
+        </Chip>
+
+        <h1 class="font-display text-display-xl text-[color:var(--color-foreground)]">
+          {h.titleLine1}{' '}
+          <span class="relative inline-block">
+            <span class="relative z-10 wavy-underline">{h.titleAccent}</span>
+          </span>
+          <br class="hidden sm:inline" />
+          {' '}{h.titleLine2}
+        </h1>
+
+        <p class="max-w-xl text-lg sm:text-xl text-[color:var(--color-foreground-soft)] leading-relaxed">
+          {h.subtitle}
+        </p>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <Button href={waLink} variant="whatsapp" size="lg">
+            <MessageCircle class="h-5 w-5" aria-hidden="true" />
+            <span>{h.ctaPrimary}</span>
+          </Button>
+          <Button href={coursesLink} variant="secondary" size="lg">
+            <span>{h.ctaSecondary}</span>
+            <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+          </Button>
+        </div>
+
+        <!-- Mobile-only feature strip (hidden on lg where editorial cards take over) -->
+        <div class="grid grid-cols-2 gap-3 lg:hidden" aria-hidden="true">
+          <div class="flex items-center gap-3 rounded-2xl bg-brand-500 p-4 text-[color:var(--color-paper)]">
+            <Globe2 class="h-4 w-4 shrink-0 text-brand-100" />
+            <div class="flex flex-col leading-tight">
+              <span class="text-[10px] uppercase tracking-wider text-brand-100">Enfoque</span>
+              <span class="font-display text-sm">British English</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 rounded-2xl bg-[color:var(--color-ink)] p-4 text-[color:var(--color-paper)]">
+            <GraduationCap class="h-4 w-4 shrink-0 text-butter-300" />
+            <div class="flex flex-col leading-tight">
+              <span class="text-[10px] uppercase tracking-wider text-[color:var(--color-paper)]/60">Inicio</span>
+              <span class="font-display text-sm">10 Ago 2026</span>
+            </div>
+          </div>
+          <div class="col-span-2 flex items-center justify-between rounded-2xl border border-[color:var(--color-border)] bg-peach-100 px-5 py-3 dark:bg-peach-700/20">
+            <div class="flex flex-col"><span class="text-[10px] uppercase tracking-wider text-peach-700 dark:text-peach-200">Kiddos</span><span class="font-display text-lg text-[color:var(--color-foreground)]">7-11</span></div>
+            <div class="h-4 w-px bg-[color:var(--color-border)]"></div>
+            <div class="flex flex-col"><span class="text-[10px] uppercase tracking-wider text-peach-700 dark:text-peach-200">Teens</span><span class="font-display text-lg text-[color:var(--color-foreground)]">12-17</span></div>
+            <div class="h-4 w-px bg-[color:var(--color-border)]"></div>
+            <div class="flex flex-col"><span class="text-[10px] uppercase tracking-wider text-peach-700 dark:text-peach-200">Adults</span><span class="font-display text-lg text-[color:var(--color-foreground)]">18+</span></div>
+            <div class="h-4 w-px bg-[color:var(--color-border)]"></div>
+            <div class="flex flex-col"><span class="text-[10px] uppercase tracking-wider text-peach-700 dark:text-peach-200">Niveles</span><span class="font-display text-lg text-[color:var(--color-foreground)]">A1-C1</span></div>
+          </div>
+        </div>
+
+        <!-- Stat row -->
+        <dl class="mt-4 grid grid-cols-2 gap-x-8 gap-y-6 border-t border-[color:var(--color-border)] pt-8 sm:grid-cols-4">
+          {[h.stat1, h.stat2, h.stat3, h.stat4].map((stat) => (
+            <div class="flex flex-col gap-1">
+              <dt class="font-display text-2xl sm:text-3xl text-[color:var(--color-foreground)]">
+                {stat.value}
+              </dt>
+              <dd class="text-xs uppercase tracking-[0.16em] text-[color:var(--color-foreground-muted)]">
+                {stat.label}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      <!-- Right: Editorial composition — desktop only (lg+) -->
+      <div class="hidden lg:block lg:col-span-5 relative h-[520px]">
+        <!-- Card 1: motto big -->
+        <div
+          class="absolute left-0 top-2 w-[68%] rotate-[-3deg] rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-7 shadow-[var(--shadow-card)]"
+          style="animation: float 8s ease-in-out infinite;"
+        >
+          <p class="text-xs uppercase tracking-[0.18em] text-[color:var(--color-foreground-muted)] mb-3">
+            {t.meta.motto}
+          </p>
+          <p class="font-display text-4xl leading-[1.05] text-[color:var(--color-foreground)]">
+            Strive.<br />
+            <span class="wavy-underline-sage">Dream.</span><br />
+            Achieve.
+          </p>
+        </div>
+
+        <!-- Card 2: program chip -->
+        <div
+          class="absolute right-0 top-12 w-[60%] rotate-[5deg] rounded-3xl bg-brand-500 p-7 text-[color:var(--color-paper)] shadow-[var(--shadow-pop)]"
+          style="animation: float 9s ease-in-out infinite; animation-delay: -2s;"
+        >
+          <div class="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-brand-100 mb-3">
+            <Globe2 class="h-3.5 w-3.5" aria-hidden="true" />
+            <span>British English</span>
+          </div>
+          <p class="font-display text-3xl leading-tight">
+            From A1 to C1 — at your own pace.
+          </p>
+        </div>
+
+        <!-- Card 3: ages strip -->
+        <div
+          class="absolute left-4 bottom-28 flex w-[55%] flex-col gap-3 rounded-3xl border border-[color:var(--color-border)] bg-peach-100 p-5 shadow-[var(--shadow-card)] dark:bg-peach-700/20"
+          style="animation: float 7s ease-in-out infinite; animation-delay: -4s;"
+        >
+          <div class="flex items-center justify-between text-xs uppercase tracking-[0.18em] text-peach-700 dark:text-peach-200">
+            <span>Edades</span>
+            <span>3 programas</span>
+          </div>
+          <div class="flex items-end justify-between gap-2 font-display text-[color:var(--color-foreground)]">
+            <div class="flex flex-col"><span class="text-[10px] uppercase tracking-wider opacity-60">Kiddos</span><span class="text-xl">7-11</span></div>
+            <div class="flex flex-col"><span class="text-[10px] uppercase tracking-wider opacity-60">Teens</span><span class="text-xl">12-17</span></div>
+            <div class="flex flex-col"><span class="text-[10px] uppercase tracking-wider opacity-60">Adults</span><span class="text-xl">18+</span></div>
+          </div>
+        </div>
+
+        <!-- Card 4: badge bottom-right -->
+        <div
+          class="absolute right-4 bottom-4 flex items-center gap-3 rounded-full bg-[color:var(--color-ink)] px-5 py-3 text-[color:var(--color-paper)] shadow-[var(--shadow-pop)]"
+          style="animation: float 6s ease-in-out infinite; animation-delay: -1s;"
+        >
+          <GraduationCap class="h-5 w-5 text-butter-300" aria-hidden="true" />
+          <div class="flex flex-col leading-tight">
+            <span class="text-[10px] uppercase tracking-[0.16em] text-[color:var(--color-paper)]/60">Inicio</span>
+            <span class="font-display text-sm">10 Ago 2026</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>

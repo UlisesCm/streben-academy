@@ -1,0 +1,64 @@
+---
+import Eyebrow from './Eyebrow.astro';
+
+interface Props {
+  eyebrow?: string;
+  eyebrowNumber?: string;
+  eyebrowTone?: 'brand' | 'peach' | 'sage' | 'butter' | 'ink';
+  title: string;
+  titleAccent?: string;
+  titleEnd?: string;
+  accentTone?: 'brand' | 'peach' | 'sage' | 'butter';
+  subtitle?: string;
+  align?: 'left' | 'center';
+  size?: 'md' | 'lg';
+  class?: string;
+}
+
+const {
+  eyebrow,
+  eyebrowNumber,
+  eyebrowTone = 'brand',
+  title,
+  titleAccent,
+  titleEnd,
+  accentTone = 'brand',
+  subtitle,
+  align = 'left',
+  size = 'lg',
+  class: className = '',
+} = Astro.props;
+
+const accentClass: Record<NonNullable<Props['accentTone']>, string> = {
+  brand: 'wavy-underline',
+  peach: 'wavy-underline-peach',
+  sage: 'wavy-underline-sage',
+  butter: 'wavy-underline-peach',
+};
+
+const titleSize = size === 'lg' ? 'text-display-lg' : 'text-display-md';
+const alignClass = align === 'center' ? 'text-center items-center mx-auto' : 'text-left items-start';
+---
+
+<header class:list={['flex flex-col gap-5 max-w-3xl', alignClass, className]}>
+  {eyebrow && (
+    <Eyebrow number={eyebrowNumber} label={eyebrow} tone={eyebrowTone} />
+  )}
+  <h2 class:list={['font-display leading-[1.05]', titleSize]}>
+    <span class="text-[color:var(--color-foreground)]">{title}</span>
+    {titleAccent && (
+      <>
+        {' '}
+        <span class:list={['inline-block', accentClass[accentTone]]}>
+          {titleAccent}
+        </span>
+      </>
+    )}
+    {titleEnd && <span class="text-[color:var(--color-foreground)]">{titleEnd}</span>}
+  </h2>
+  {subtitle && (
+    <p class="text-[color:var(--color-foreground-soft)] text-lg sm:text-xl leading-relaxed max-w-2xl">
+      {subtitle}
+    </p>
+  )}
+</header>

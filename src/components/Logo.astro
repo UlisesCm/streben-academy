@@ -1,0 +1,49 @@
+---
+/**
+ * Streben wordmark — placeholder hasta que el cliente entregue el SVG oficial.
+ * Construido con Paytone One; respeta light/dark. El bullet morado funciona
+ * como ancla visual.
+ */
+interface Props {
+  variant?: 'full' | 'mark';
+  href?: string;
+  class?: string;
+  ariaLabel?: string;
+}
+
+const {
+  variant = 'full',
+  href = '/',
+  class: className = '',
+  ariaLabel = 'STREBEN ACADEMY — Inicio',
+} = Astro.props;
+---
+
+<a
+  href={href}
+  aria-label={ariaLabel}
+  class:list={[
+    'inline-flex items-center gap-2 font-display text-[color:var(--color-foreground)]',
+    'rounded-md focus-visible:outline-2 focus-visible:outline-[color:var(--color-ring)] focus-visible:outline-offset-3',
+    'transition-opacity hover:opacity-80',
+    className,
+  ]}
+>
+  <span
+    aria-hidden="true"
+    class="relative inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-500 text-[color:var(--color-paper)] shadow-[var(--shadow-soft)]"
+  >
+    <span class="block h-2.5 w-2.5 rounded-full bg-[color:var(--color-paper)]"></span>
+    <span
+      class="absolute -right-0.5 -top-0.5 block h-2 w-2 rounded-full bg-peach-300"
+    ></span>
+  </span>
+  {variant === 'full' && (
+    <span class="flex flex-col leading-none">
+      <span class="text-[15px] sm:text-base tracking-[0.04em]">STREBEN</span>
+      <span class="text-[10px] sm:text-[11px] font-sans font-medium uppercase tracking-[0.32em] text-[color:var(--color-foreground-muted)]">
+        Academy
+      </span>
+    </span>
+  )}
+</a>

@@ -1,0 +1,39 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import SobreNosotrosPage from '~/components/pages/SobreNosotrosPage.astro';
+import { personSchema } from '~/components/seo/schemas';
+import { localePaths } from '~/i18n/config';
+import { useTranslations, type Locale } from '~/i18n';
+import { SITE } from '~/lib/site';
+import { loc } from '~/lib/url';
+
+export const getStaticPaths = () => localePaths();
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = useTranslations(locale);
+const a = t.about;
+
+// Person JSON-LD para Arantza Molina (fundadora)
+const founder = personSchema({
+  name: a.founder.name,
+  jobTitle: a.founder.title,
+  description: a.founder.bio.join(' '),
+  url: `${SITE.url}${loc(locale, 'sobre-nosotros')}`,
+});
+
+const pageTitle = `${a.title} ${a.titleAccent} | ${t.meta.siteName}`;
+const pageDescription = a.subtitle;
+---
+
+<BaseLayout
+  locale={locale}
+  title={pageTitle}
+  description={pageDescription}
+  jsonLd={[founder]}
+>
+  <SobreNosotrosPage locale={locale} t={t} />
+</BaseLayout>
