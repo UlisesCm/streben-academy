@@ -1,6 +1,4 @@
-# Apex → www (lo maneja Cloudflare DNS, pero por si acaso)
-https://strebenacademy.com/*  https://www.strebenacademy.com/:splat  301!
-
+# Nota: apex → www se configura en Cloudflare DNS (Bulk Redirects), no aquí.
 # Rutas viejas Jimdo (todas con trailing slash) → nuevas
 /cursos-y-programas/         /cursos                301
 /cursos-y-programas/*        /cursos/:splat         301
