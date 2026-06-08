@@ -28,24 +28,24 @@ Detalles y razones en [`CLAUDE.md`](./CLAUDE.md) §4.
 
 ## Quickstart
 
-Requisitos: Node ≥ 20, npm.
+Requisitos: Node ≥ 20, [Bun](https://bun.sh) ≥ 1.x.
 
 ```bash
-npm install
-npm run dev          # → http://localhost:4321
+bun install
+bun run dev          # → http://localhost:4321
 ```
 
 Build estático:
 
 ```bash
-npm run build        # → dist/
-npm run preview      # → http://localhost:4322 sirviendo dist/
+bun run build        # → dist/
+bun run preview      # → http://localhost:4322 sirviendo dist/
 ```
 
 Type-check + diagnósticos Astro:
 
 ```bash
-npm run check
+bun run check
 ```
 
 ---

@@ -130,7 +130,7 @@
 - Node ≥ 20
 - Astro ^5
 - Tailwind ^4
-- Package manager: **npm** (no pnpm, no yarn — keep it simple)
+- Package manager: **bun** (no npm, no pnpm, no yarn — más rápido, lockfile `bun.lockb`)
 
 ---
 
@@ -290,14 +290,14 @@ public/
 
 ---
 
-## 9. Scripts npm esperados (a definir cuando arme el repo)
+## 9. Scripts (bun)
 
 ```bash
-npm run dev        # arranca Astro en localhost:4321
-npm run build      # build estático en dist/
-npm run preview    # sirve dist/ local
-npm run check      # astro check + tsc
-npm run seo        # skill streben-seo-check post-build
+bun run dev        # arranca Astro en localhost:4321
+bun run build      # build estático en dist/
+bun run preview    # sirve dist/ local
+bun run check      # astro check + tsc
+bun run seo        # skill streben-seo-check post-build
 ```
 
 ---
