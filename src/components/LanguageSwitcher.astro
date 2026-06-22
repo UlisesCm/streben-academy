@@ -7,9 +7,18 @@ interface Props {
   currentLocale: Locale;
   currentPath: string;
   menuLabel: string;
+  /** Where the dropdown opens relative to the trigger. Use a `top-*` value when the
+   *  trigger sits near the bottom of its container (e.g. inside the mobile sheet). */
+  placement?: 'bottom-end' | 'top-start' | 'top-end';
 }
 
-const { currentLocale, currentPath, menuLabel } = Astro.props;
+const { currentLocale, currentPath, menuLabel, placement = 'bottom-end' } = Astro.props;
+
+const placementClasses: Record<NonNullable<Props['placement']>, string> = {
+  'bottom-end': 'right-0 top-12 origin-top-right',
+  'top-start': 'left-0 bottom-12 origin-bottom-left',
+  'top-end': 'right-0 bottom-12 origin-bottom-right',
+};
 ---
 
 <div class="relative" data-lang-root>
@@ -29,7 +38,10 @@ const { currentLocale, currentPath, menuLabel } = Astro.props;
     data-lang-menu
     role="menu"
     aria-label={menuLabel}
-    class="invisible absolute right-0 top-12 z-40 min-w-[200px] origin-top-right scale-95 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-1.5 opacity-0 shadow-[var(--shadow-pop)] transition-[transform,opacity,visibility] duration-200 ease-out data-[open=true]:visible data-[open=true]:scale-100 data-[open=true]:opacity-100"
+    class:list={[
+      'invisible absolute z-40 min-w-[200px] scale-95 rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-1.5 opacity-0 shadow-[var(--shadow-pop)] transition-[transform,opacity,visibility] duration-200 ease-out data-[open=true]:visible data-[open=true]:scale-100 data-[open=true]:opacity-100',
+      placementClasses[placement],
+    ]}
   >
     {
       locales.map((l) => {
@@ -42,7 +54,7 @@ const { currentLocale, currentPath, menuLabel } = Astro.props;
             aria-checked={isCurrent ? 'true' : 'false'}
             hreflang={localeLabels[l].htmlLang}
             class:list={[
-              'flex items-center justify-between gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors',
+              'flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
               isCurrent
                 ? 'bg-brand-100 text-[color:var(--color-foreground)] dark:bg-brand-800/40'
                 : 'text-[color:var(--color-foreground-soft)] hover:bg-brand-50 hover:text-[color:var(--color-foreground)] dark:hover:bg-brand-900/30',
