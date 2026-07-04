@@ -8,9 +8,18 @@ interface Props {
     dark: string;
     system: string;
   };
+  /** Where the dropdown opens relative to the trigger. Use a `top-*` value when the
+   *  trigger sits near the bottom of its container (e.g. inside the mobile sheet). */
+  placement?: 'bottom-end' | 'top-start' | 'top-end';
 }
 
-const { labels } = Astro.props;
+const { labels, placement = 'bottom-end' } = Astro.props;
+
+const placementClasses: Record<NonNullable<Props['placement']>, string> = {
+  'bottom-end': 'right-0 top-12 origin-top-right',
+  'top-start': 'left-0 bottom-12 origin-bottom-left',
+  'top-end': 'right-0 bottom-12 origin-bottom-right',
+};
 ---
 
 <div class="relative" data-theme-root>
@@ -32,13 +41,16 @@ const { labels } = Astro.props;
     data-theme-menu
     role="menu"
     aria-label={labels.menu}
-    class="invisible absolute right-0 top-12 z-40 min-w-[180px] origin-top-right scale-95 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-1.5 opacity-0 shadow-[var(--shadow-pop)] transition-[transform,opacity,visibility] duration-200 ease-out data-[open=true]:visible data-[open=true]:scale-100 data-[open=true]:opacity-100"
+    class:list={[
+      'invisible absolute z-40 min-w-[180px] scale-95 rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-1.5 opacity-0 shadow-[var(--shadow-pop)] transition-[transform,opacity,visibility] duration-200 ease-out data-[open=true]:visible data-[open=true]:scale-100 data-[open=true]:opacity-100',
+      placementClasses[placement],
+    ]}
   >
     <button
       type="button"
       role="menuitemradio"
       data-theme-value="light"
-      class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-[color:var(--color-foreground-soft)] transition-colors hover:bg-brand-50 hover:text-[color:var(--color-foreground)] aria-checked:bg-brand-100 aria-checked:text-[color:var(--color-foreground)] dark:hover:bg-brand-900/30 dark:aria-checked:bg-brand-800/40"
+      class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-[color:var(--color-foreground-soft)] transition-colors hover:bg-brand-50 hover:text-[color:var(--color-foreground)] aria-checked:bg-brand-100 aria-checked:text-[color:var(--color-foreground)] dark:hover:bg-brand-900/30 dark:aria-checked:bg-brand-800/40"
     >
       <Sun class="h-4 w-4" aria-hidden="true" />
       <span>{labels.light}</span>
@@ -47,7 +59,7 @@ const { labels } = Astro.props;
       type="button"
       role="menuitemradio"
       data-theme-value="dark"
-      class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-[color:var(--color-foreground-soft)] transition-colors hover:bg-brand-50 hover:text-[color:var(--color-foreground)] aria-checked:bg-brand-100 aria-checked:text-[color:var(--color-foreground)] dark:hover:bg-brand-900/30 dark:aria-checked:bg-brand-800/40"
+      class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-[color:var(--color-foreground-soft)] transition-colors hover:bg-brand-50 hover:text-[color:var(--color-foreground)] aria-checked:bg-brand-100 aria-checked:text-[color:var(--color-foreground)] dark:hover:bg-brand-900/30 dark:aria-checked:bg-brand-800/40"
     >
       <Moon class="h-4 w-4" aria-hidden="true" />
       <span>{labels.dark}</span>
@@ -56,7 +68,7 @@ const { labels } = Astro.props;
       type="button"
       role="menuitemradio"
       data-theme-value="system"
-      class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-[color:var(--color-foreground-soft)] transition-colors hover:bg-brand-50 hover:text-[color:var(--color-foreground)] aria-checked:bg-brand-100 aria-checked:text-[color:var(--color-foreground)] dark:hover:bg-brand-900/30 dark:aria-checked:bg-brand-800/40"
+      class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-[color:var(--color-foreground-soft)] transition-colors hover:bg-brand-50 hover:text-[color:var(--color-foreground)] aria-checked:bg-brand-100 aria-checked:text-[color:var(--color-foreground)] dark:hover:bg-brand-900/30 dark:aria-checked:bg-brand-800/40"
     >
       <Monitor class="h-4 w-4" aria-hidden="true" />
       <span>{labels.system}</span>

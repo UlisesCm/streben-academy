@@ -1,14 +1,21 @@
 ---
 /**
- * Streben wordmark — placeholder hasta que el cliente entregue el SVG oficial.
- * Construido con Paytone One; respeta light/dark. El bullet morado funciona
- * como ancla visual.
+ * Streben logo — lockup horizontal: marca oficial (icono) + wordmark.
+ * El icono real se extrae del logo de marca; dos variantes (claro/oscuro)
+ * para que la silueta lea bien sobre cualquier fondo. El wordmark usa
+ * Paytone One (consistente con los titulares del sitio) y respeta el tema.
  */
+import { Image } from 'astro:assets';
+import markLight from '../assets/logo-mark.png';
+import markDark from '../assets/logo-mark-dark.png';
+
 interface Props {
   variant?: 'full' | 'mark';
   href?: string;
   class?: string;
   ariaLabel?: string;
+  /** Fondo oscuro fijo (p.ej. footer): fuerza icono y texto claros. */
+  onDark?: boolean;
 }
 
 const {
@@ -16,32 +23,46 @@ const {
   href = '/',
   class: className = '',
   ariaLabel = 'STREBEN ACADEMY — Inicio',
+  onDark = false,
 } = Astro.props;
+
+const markClass = 'h-9 w-auto shrink-0 sm:h-10';
 ---
 
 <a
   href={href}
   aria-label={ariaLabel}
   class:list={[
-    'inline-flex items-center gap-2 font-display text-[color:var(--color-foreground)]',
+    'inline-flex items-center gap-2.5 font-display',
     'rounded-md focus-visible:outline-2 focus-visible:outline-[color:var(--color-ring)] focus-visible:outline-offset-3',
     'transition-opacity hover:opacity-80',
     className,
   ]}
 >
-  <span
-    aria-hidden="true"
-    class="relative inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-500 text-[color:var(--color-paper)] shadow-[var(--shadow-soft)]"
-  >
-    <span class="block h-2.5 w-2.5 rounded-full bg-[color:var(--color-paper)]"></span>
-    <span
-      class="absolute -right-0.5 -top-0.5 block h-2 w-2 rounded-full bg-peach-300"
-    ></span>
-  </span>
+  {onDark ? (
+    <Image src={markDark} alt="" aria-hidden="true" class={markClass} densities={[1, 2]} />
+  ) : (
+    <>
+      <Image src={markLight} alt="" aria-hidden="true" class:list={[markClass, 'dark:hidden']} densities={[1, 2]} />
+      <Image src={markDark} alt="" aria-hidden="true" class:list={[markClass, 'hidden dark:block']} densities={[1, 2]} />
+    </>
+  )}
   {variant === 'full' && (
     <span class="flex flex-col leading-none">
-      <span class="text-[15px] sm:text-base tracking-[0.04em]">STREBEN</span>
-      <span class="text-[10px] sm:text-[11px] font-sans font-medium uppercase tracking-[0.32em] text-[color:var(--color-foreground-muted)]">
+      <span
+        class:list={[
+          'text-[15px] sm:text-base tracking-[0.04em]',
+          onDark ? 'text-white' : 'text-[color:var(--color-foreground)]',
+        ]}
+      >
+        STREBEN
+      </span>
+      <span
+        class:list={[
+          'text-[10px] sm:text-[11px] font-sans font-medium uppercase tracking-[0.32em]',
+          onDark ? 'text-white/70' : 'text-[color:var(--color-foreground-muted)]',
+        ]}
+      >
         Academy
       </span>
     </span>

@@ -158,13 +158,17 @@ const ctaHref = whatsappLink(t.whatsapp.prefilled);
           currentLocale={locale}
           currentPath={currentPath}
           menuLabel={t.nav.languageMenu}
+          placement="top-start"
         />
-        <ThemeToggle labels={{
-          menu: t.nav.themeMenu,
-          light: t.themes.light,
-          dark: t.themes.dark,
-          system: t.themes.system,
-        }} />
+        <ThemeToggle
+          placement="top-end"
+          labels={{
+            menu: t.nav.themeMenu,
+            light: t.themes.light,
+            dark: t.themes.dark,
+            system: t.themes.system,
+          }}
+        />
       </div>
       <Button href={ctaHref} variant="ink" size="lg" fullWidth>
         <span>{t.nav.requestInfo}</span>

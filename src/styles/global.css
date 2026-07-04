@@ -47,38 +47,46 @@
   --text-display-sm: clamp(1.375rem, 1vw + 1rem, 1.875rem);
   --text-display-sm--line-height: 1.2;
 
-  /* Paleta brand — lavanda pastel con acentos cálidos.
+  /* Paleta brand — PÚRPURA oficial (paleta-colores.png).
+     Anclada en #B39DDB (500) y profundizando hacia el índigo
+     "futurista" #6A00F4 / #4B0082 en los tonos oscuros.
      OKLCH para mejor consistencia perceptual. */
-  --color-brand-50:  oklch(98% 0.012 295);
-  --color-brand-100: oklch(95.5% 0.025 295);
-  --color-brand-200: oklch(91% 0.05 295);
-  --color-brand-300: oklch(84% 0.085 295);
-  --color-brand-400: oklch(76% 0.12 295);
-  --color-brand-500: oklch(67% 0.16 295);
-  --color-brand-600: oklch(58% 0.18 295);
-  --color-brand-700: oklch(48% 0.16 295);
-  --color-brand-800: oklch(38% 0.13 295);
-  --color-brand-900: oklch(28% 0.09 295);
-  --color-brand-950: oklch(18% 0.06 295);
+  --color-brand-50:  oklch(97.6% 0.012 305);
+  --color-brand-100: oklch(95.0% 0.025 304);
+  --color-brand-200: oklch(90.5% 0.045 303);
+  --color-brand-300: oklch(85.5% 0.058 303); /* ~#DCCCF2 */
+  --color-brand-400: oklch(79.8% 0.074 300); /* ~#C0B4E8 */
+  --color-brand-500: oklch(73.7% 0.091 300); /* #B39DDB — primario de marca */
+  --color-brand-600: oklch(66.0% 0.118 297); /* ~#A78BCF profundizado */
+  --color-brand-700: oklch(55.0% 0.158 293);
+  --color-brand-800: oklch(43.0% 0.185 290); /* CTA primario (claro) → futurista */
+  --color-brand-900: oklch(34.0% 0.165 296); /* ~#4B0082 */
+  --color-brand-950: oklch(23.0% 0.105 297);
 
-  /* Acentos pastel — peach, sage, butter */
-  --color-peach-100: oklch(95% 0.04 30);
-  --color-peach-200: oklch(89% 0.08 30);
-  --color-peach-300: oklch(83% 0.11 30);
-  --color-peach-500: oklch(72% 0.15 30);
-  --color-peach-700: oklch(50% 0.13 30);
+  /* Índigos "futurista" de la paleta (bloque inferior) */
+  --color-futurista:      oklch(49.6% 0.283 288); /* #6A00F4 */
+  --color-futurista-deep: oklch(33.9% 0.179 302); /* #4B0082 */
 
-  --color-sage-100: oklch(95% 0.035 150);
-  --color-sage-200: oklch(89% 0.07 150);
-  --color-sage-300: oklch(82% 0.1 150);
-  --color-sage-500: oklch(68% 0.13 150);
-  --color-sage-700: oklch(45% 0.11 150);
+  /* Acento ROSA — antes "peach" (#FFD1E3 → #F78FB3) */
+  --color-peach-100: oklch(94.5% 0.035 352);
+  --color-peach-200: oklch(88.5% 0.062 353); /* ~#FFC2D9 */
+  --color-peach-300: oklch(83.0% 0.090 354);
+  --color-peach-500: oklch(77.0% 0.132 358); /* ~#F78FB3 */
+  --color-peach-700: oklch(49.0% 0.155 6);   /* rosa profundo (texto/contraste) */
 
-  --color-butter-100: oklch(96.5% 0.04 90);
-  --color-butter-200: oklch(92% 0.09 90);
-  --color-butter-300: oklch(87% 0.13 90);
-  --color-butter-500: oklch(78% 0.16 90);
-  --color-butter-700: oklch(55% 0.14 90);
+  /* Acento FUCSIA — antes "sage" (#F6A6D7 → #F06292) */
+  --color-sage-100: oklch(93.5% 0.040 350);
+  --color-sage-200: oklch(86.5% 0.080 352);
+  --color-sage-300: oklch(81.5% 0.112 343); /* ~#F6A6D7 */
+  --color-sage-500: oklch(68.8% 0.180 2);   /* #F06292 */
+  --color-sage-700: oklch(50.0% 0.180 4);   /* fucsia profundo (texto/contraste) */
+
+  /* Acento LILA / rosa clara — antes "butter" (#E2C4E9 → #D4A6D8) */
+  --color-butter-100: oklch(95.5% 0.028 320);
+  --color-butter-200: oklch(89.5% 0.052 320); /* ~#E2C4E9 */
+  --color-butter-300: oklch(82.5% 0.082 322); /* ~#D4A6D8 */
+  --color-butter-500: oklch(74.0% 0.115 325);
+  --color-butter-700: oklch(50.0% 0.150 320); /* lila profundo (texto/contraste) */
 
   /* Cream / paper / ink — tonos neutros cálidos */
   --color-paper: oklch(98.5% 0.008 75);     /* off-white cálido */
@@ -98,9 +106,11 @@
   --color-border: var(--color-line);
   --color-ring: var(--color-brand-500);
   --color-primary: var(--color-brand-800);
-  --color-primary-foreground: oklch(99% 0.005 295);
-  --color-success: var(--color-sage-700);
-  --color-warning: var(--color-butter-700);
+  --color-primary-foreground: oklch(99% 0.005 305);
+  /* Semánticos funcionales — desacoplados de la paleta de marca
+     (sage/butter ahora son fucsia/lila): verde = éxito, ámbar = aviso. */
+  --color-success: oklch(52% 0.13 150);
+  --color-warning: oklch(72% 0.15 75);
   --color-whatsapp: oklch(44% 0.16 145);
   --color-whatsapp-hover: oklch(38% 0.16 145);
 
@@ -153,25 +163,26 @@
    ---------------------------------------------------------------------------- */
 @layer base {
   :where(.dark) {
-    --color-paper: oklch(16% 0.045 295);
-    --color-paper-2: oklch(20% 0.05 295);
-    --color-ink: oklch(96% 0.015 295);
-    --color-ink-soft: oklch(82% 0.025 295);
-    --color-ink-muted: oklch(66% 0.03 295);
-    --color-line: oklch(30% 0.035 295);
+    /* Fondo morado oscuro "futurista" (hue ~300, paleta oficial) */
+    --color-paper: oklch(17% 0.050 299);
+    --color-paper-2: oklch(21% 0.060 300);
+    --color-ink: oklch(96% 0.015 300);
+    --color-ink-soft: oklch(82% 0.025 300);
+    --color-ink-muted: oklch(66% 0.030 300);
+    --color-line: oklch(31% 0.040 300);
 
     --color-surface: var(--color-paper);
     --color-surface-2: var(--color-paper-2);
-    --color-surface-elevated: oklch(24% 0.055 295);
+    --color-surface-elevated: oklch(25% 0.065 300);
     --color-foreground: var(--color-ink);
     --color-foreground-soft: var(--color-ink-soft);
     --color-foreground-muted: var(--color-ink-muted);
     --color-border: var(--color-line);
     --color-primary: var(--color-brand-400);
-    --color-primary-foreground: oklch(15% 0.04 295);
+    --color-primary-foreground: oklch(15% 0.04 298);
 
-    --shadow-card: 0 1px 0 0 oklch(40% 0.05 295 / 50%), 0 10px 30px -8px oklch(0% 0 0 / 40%);
-    --shadow-card-hover: 0 1px 0 0 oklch(40% 0.05 295 / 60%), 0 22px 50px -12px oklch(0% 0 0 / 55%);
+    --shadow-card: 0 1px 0 0 oklch(40% 0.06 298 / 50%), 0 10px 30px -8px oklch(0% 0 0 / 40%);
+    --shadow-card-hover: 0 1px 0 0 oklch(40% 0.06 298 / 60%), 0 22px 50px -12px oklch(0% 0 0 / 55%);
     --shadow-pop: 0 18px 60px -15px oklch(0% 0 0 / 60%);
   }
 }
@@ -279,7 +290,7 @@
 
 /* Underline ondulado hand-drawn (para palabras acento en hero) */
 @utility wavy-underline {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12'><path d='M0 6 Q 12.5 0 25 6 T 50 6 T 75 6 T 100 6' stroke='%23c9a4ff' stroke-width='3' fill='none' stroke-linecap='round'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12'><path d='M0 6 Q 12.5 0 25 6 T 50 6 T 75 6 T 100 6' stroke='%239575cd' stroke-width='3' fill='none' stroke-linecap='round'/></svg>");
   background-repeat: no-repeat;
   background-position: 0 100%;
   background-size: 100% 0.45em;
@@ -287,7 +298,7 @@
 }
 
 @utility wavy-underline-peach {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12'><path d='M0 6 Q 12.5 0 25 6 T 50 6 T 75 6 T 100 6' stroke='%23f4b3a4' stroke-width='3' fill='none' stroke-linecap='round'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12'><path d='M0 6 Q 12.5 0 25 6 T 50 6 T 75 6 T 100 6' stroke='%23f78fb3' stroke-width='3' fill='none' stroke-linecap='round'/></svg>");
   background-repeat: no-repeat;
   background-position: 0 100%;
   background-size: 100% 0.45em;
@@ -295,7 +306,7 @@
 }
 
 @utility wavy-underline-sage {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12'><path d='M0 6 Q 12.5 0 25 6 T 50 6 T 75 6 T 100 6' stroke='%2392c9a8' stroke-width='3' fill='none' stroke-linecap='round'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12'><path d='M0 6 Q 12.5 0 25 6 T 50 6 T 75 6 T 100 6' stroke='%23f06292' stroke-width='3' fill='none' stroke-linecap='round'/></svg>");
   background-repeat: no-repeat;
   background-position: 0 100%;
   background-size: 100% 0.45em;
