@@ -152,14 +152,33 @@ Skill: **`/streben-seo-check`** — recorre el build local y verifica title, des
 
 ## Deploy a Cloudflare Pages
 
-Skill detallada: **`/streben-deploy-cf`**. Resumen:
+El proyecto vive en Cloudflare Pages: **`streben-academy`** → https://streben-academy.pages.dev
 
-1. `git push` del repo (GitHub / GitLab).
-2. Cloudflare Pages → "Crear proyecto" → conectar repo.
-3. Build command: `npm run build`. Output directory: `dist`.
-4. Variables de entorno (las de la sección anterior).
-5. Dominio: agregar `strebenacademy.com` y `www.strebenacademy.com` (apex → www redirect ya configurado en `public/_redirects`).
-6. Pasar DNS desde Jimdo a Cloudflare (ver skill para detalles).
+### Automático (lo normal)
+
+Todo push a `main` dispara `.github/workflows/deploy.yml`, que instala, corre `bun run check`,
+buildea y publica. No hay que hacer nada a mano.
+
+Requiere dos secrets en el repo (Settings → Secrets → Actions):
+
+| Secret | Valor |
+|--------|-------|
+| `CLOUDFLARE_ACCOUNT_ID` | ID de la cuenta de Cloudflare |
+| `CLOUDFLARE_API_TOKEN` | Token con permiso `Cloudflare Pages: Edit` |
+
+### Manual (respaldo)
+
+```bash
+bun run deploy   # build + wrangler pages deploy dist --project-name streben-academy
+```
+
+Requiere `bunx wrangler login` previo.
+
+### Dominio
+
+`strebenacademy.com` todavía **no está conectado** — la transferencia sigue pendiente.
+Cuando llegue: agregarlo como zona en Cloudflare, apuntar `www` al proyecto de Pages y
+dejar el apex redirigiendo a `www`. Detalle en la skill **`/streben-deploy-cf`**.
 
 ---
 

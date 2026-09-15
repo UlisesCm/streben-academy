@@ -122,7 +122,7 @@
 | SEO | Meta tags + JSON-LD desde día 1: `EducationalOrganization`, `Course`, `Person`, `Review`, `FAQPage` | Aprende del audit: cada página con `<title>`, `meta description` 140-160 chars, `canonical`, OG, Twitter Card. |
 | Sitemap | `@astrojs/sitemap` | Auto, con `lastmod`. |
 | Robots | `public/robots.txt` apuntando a `https://www.strebenacademy.com/sitemap-index.xml` (con `www`, NO al apex). |
-| Deploy | **Cloudflare Pages** (adapter `@astrojs/cloudflare`) | Free tier amplio, CDN global, mover DNS desde Jimdo. |
+| Deploy | **Cloudflare Pages** (SSG puro, `output: 'static'`, SIN adapter) | Free tier amplio, CDN global. Auto-deploy por GitHub Actions en cada push a `main`. El adapter `@astrojs/cloudflare` se probó y se descartó: rompe el routing estático. |
 | Analítica | Slots preparados para GA4 + Meta Pixel (no instalados al lanzamiento — pendiente del cliente). | |
 
 ### 4.1 Versiones objetivo
@@ -347,16 +347,18 @@ Implicación de diseño: mucho color (paleta pastel), secciones bien diferenciad
 | 12 | Galería / Alumnos / Legales | ⏳ |
 | 13 | SEO completo (JSON-LD, sitemap, robots, redirects, OG images) | ⏳ |
 | 14 | Pase `streben-seo-check` en verde | ⏳ |
-| 15 | README con instrucciones de deploy a Cloudflare Pages | ⏳ |
+| 15 | README con instrucciones de deploy a Cloudflare Pages | ✅ Completo |
 
 ---
 
 ## 13. Pendientes del cliente (bloquean piezas concretas)
+
+- [ ] **Transferencia del dominio `strebenacademy.com`** — en trámite. Hasta que llegue, el sitio vive solo en `streben-academy.pages.dev`.
 
 - [ ] **Logo** en SVG o PNG transparente alta resolución.
 - [ ] **Foto de la fundadora** profesional.
 - [ ] **Fotos / video propios** (si los tienen) para galería y home.
 - [ ] **Decisión de email corporativo** (`contacto@strebenacademy.com`) o seguir con Gmail.
 - [ ] **API key de Web3Forms** (gratis, alta en web3forms.com).
-- [ ] **Cuenta de Cloudflare Pages** lista para conectar repo.
+- [x] ~~**Cuenta de Cloudflare Pages**~~ — proyecto `streben-academy` creado y publicando en https://streben-academy.pages.dev
 - [ ] **Aviso legal y Política de privacidad** — texto definitivo (¿reusar el actual de Jimdo?).
