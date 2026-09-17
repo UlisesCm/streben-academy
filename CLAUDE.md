@@ -353,7 +353,7 @@ Implicación de diseño: mucho color (paleta pastel), secciones bien diferenciad
 
 ## 13. Pendientes del cliente (bloquean piezas concretas)
 
-- [ ] **Transferencia del dominio `strebenacademy.com`** — en trámite. Hasta que llegue, el sitio vive solo en `streben-academy.pages.dev`.
+- [x] ~~**Dominio `strebenacademy.com`**~~ — registrar Namecheap, NS en Cloudflare; `www` y apex conectados como custom domains de Pages (2026-09-16). Deploy sigue por GitHub Actions (NO conectar Git en Pages → doble deploy).
 
 - [ ] **Logo** en SVG o PNG transparente alta resolución.
 - [ ] **Foto de la fundadora** profesional.
