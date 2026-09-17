@@ -2,6 +2,15 @@ import type { Locale } from '~/i18n/config';
 import { defaultLocale, locales } from '~/i18n/config';
 
 /**
+ * Append a trailing slash to the path part of a URL, keeping any query or hash.
+ * Matches `trailingSlash: 'always'` so internal links skip Cloudflare's 308 hop.
+ */
+export function withTrailingSlash(url: string): string {
+  const [, path = '', suffix = ''] = url.match(/^([^?#]*)(.*)$/) ?? [];
+  return (path.endsWith('/') ? path : `${path}/`) + suffix;
+}
+
+/**
  * Strip the locale prefix from a URL pathname. Returns the canonical path
  * (without leading locale segment) and the detected locale.
  */
@@ -23,8 +32,8 @@ export function splitLocaleFromPath(pathname: string): { locale: Locale; rest: s
 export function switchLocale(pathname: string, target: Locale): string {
   const { rest } = splitLocaleFromPath(pathname);
   const cleanRest = rest === '/' ? '' : rest;
-  if (target === defaultLocale) return cleanRest || '/';
-  return `/${target}${cleanRest}`;
+  if (target === defaultLocale) return withTrailingSlash(cleanRest || '/');
+  return withTrailingSlash(`/${target}${cleanRest}`);
 }
 
 /**
@@ -33,6 +42,6 @@ export function switchLocale(pathname: string, target: Locale): string {
  */
 export function loc(locale: Locale, route = ''): string {
   const clean = route.replace(/^\/+/, '');
-  if (locale === defaultLocale) return clean ? `/${clean}` : '/';
-  return clean ? `/${locale}/${clean}` : `/${locale}`;
+  if (locale === defaultLocale) return withTrailingSlash(clean ? `/${clean}` : '/');
+  return withTrailingSlash(clean ? `/${locale}/${clean}` : `/${locale}`);
 }

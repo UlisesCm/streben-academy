@@ -4,13 +4,13 @@
 # CF Pages maneje el trailing slash nativo.
 
 # Rutas legacy Jimdo → nuevas rutas del sitio
-/cursos-y-programas          /cursos                301
-/cursos-y-programas/         /cursos                301
+/cursos-y-programas          /cursos/ 301
+/cursos-y-programas/         /cursos/ 301
 /cursos-y-programas/*        /cursos/:splat         301
-/galeria-y-testimonios       /testimonios           301
-/galeria-y-testimonios/      /testimonios           301
-/galeria-y-testimonios/*     /testimonios           301
-/avisos                      /alumnos               301
-/avisos/                     /alumnos               301
-/configuracion-de-cookies    /politica-de-privacidad 301
-/configuracion-de-cookies/   /politica-de-privacidad 301
+/galeria-y-testimonios       /testimonios/ 301
+/galeria-y-testimonios/      /testimonios/ 301
+/galeria-y-testimonios/*     /testimonios/ 301
+/avisos                      /alumnos/ 301
+/avisos/                     /alumnos/ 301
+/configuracion-de-cookies    /politica-de-privacidad/ 301
+/configuracion-de-cookies/   /politica-de-privacidad/ 301
